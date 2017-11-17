@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEditor;
 
 public class GameController : MonoBehaviour {
 
@@ -12,11 +13,11 @@ public class GameController : MonoBehaviour {
 
     public GameObject text;
 
-    public byte rows, columns;
+    public int rows, columns;
 
     public float distancia; //distancia entre nodos
-
-    public Spaces[,] spaces;
+    
+    public RectTransform panel;
 
     //board
     public Board board;
@@ -29,19 +30,20 @@ public class GameController : MonoBehaviour {
 
     private void Awake()
     {
-        spaces = new Spaces[rows,columns];
+        Spaces[,] spaces = new Spaces[rows, columns];
         active_player = "Jugador";
         board = new Board(rows, columns);
         ai = new Ai();
         GameObject[,] tablero;
-        tablero = new GameObject[rows, columns];
+        int realRows = rows * 2 + 1;
+        int realColumns = columns * 2 + 1;
+        tablero = new GameObject[realRows, realColumns];
         Vector3 pos = this.transform.position;
-
-
+        
         //Instantiate cuadrado/circulo
-        for (byte row = 0; row < rows; row++) 
+        for (int row = 0; row < rows; row++) 
         {
-            for (byte column = 0; column < columns; column++) 
+            for (int column = 0; column < columns; column++) 
             {
                 if ((row+1)%2!=0)//si la fila es impar
                 {
@@ -87,6 +89,34 @@ public class GameController : MonoBehaviour {
         }
         board.tablero = tablero;
         board.spaces = spaces;
+
+        RectTransform boardRT = GetComponent<RectTransform>();
+        panel.position = new Vector2(boardRT.position.x - 50, boardRT.position.y + 50);
+
+        /*panel.sizeDelta = new Vector2( (tablero[rows - 1, 0].GetComponent<RectTransform>().position.x - tablero[0, 0].GetComponent<RectTransform>().position.x) + 100,
+                                      -(tablero[0, columns - 1].GetComponent<RectTransform>().position.y - tablero[0, 0].GetComponent<RectTransform>().position.y) + 100);*/
+        panel.sizeDelta = new Vector2((tablero[rows - 1, columns - 1].GetComponent<RectTransform>().position.x - tablero[0, 0].GetComponent<RectTransform>().position.x) + 100,
+                                      -(tablero[rows - 1, columns - 1].GetComponent<RectTransform>().position.y - tablero[0, 0].GetComponent<RectTransform>().position.y) + 100);
+        
+        int screenWidth  = Screen.width;
+        int screenHeight = Screen.height;
+
+        print(screenWidth);
+        float scaleX = screenWidth / panel.sizeDelta.x;
+        float scaleY = screenHeight / panel.sizeDelta.y;
+        float escalaCuadrada;
+
+        if (scaleX >= scaleY)
+            escalaCuadrada = scaleY;
+        else escalaCuadrada = scaleX;
+
+        transform.parent = panel.transform;
+        panel.localScale = new Vector3(escalaCuadrada, escalaCuadrada, 0);
+        panel.anchorMin = new Vector2(.5f, .5f);
+        panel.anchorMax = new Vector2(.5f, .5f);
+        panel.sizeDelta = Vector2.zero;
+        panel.anchoredPosition = Vector2.zero;
+        
     }
 
     private void Update()

@@ -18,13 +18,13 @@ public class Ai {
     {
         board.tablero[scoringmove.move.row, scoringmove.move.column].GetComponent<Spaces>().pressed = true;
     }
-    public void evaluate_best_play(byte rows, byte columns) //criterio: coge el primero que encuentra sin presionar
+    public void evaluate_best_play(int rows, int columns) //criterio: coge el primero que encuentra sin presionar
     {
         Scoringmove best_play = new Scoringmove();
 
-        for (byte row = 0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
-            for (byte column = 0; column < columns; column++)
+            for (int column = 0; column < columns; column++)
             {
                 if ((row + 1) % 2 != 0)//si la fila es impar
                 {

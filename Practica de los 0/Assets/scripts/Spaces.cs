@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Spaces : MonoBehaviour {
 
-    public byte row, column;
+    public int row, column;
 
     public bool pressed = false;
 
-    public State space = 0; //debug
+    //public State space = 0; //debug
 
     public enum State{
         normal,
@@ -22,7 +22,7 @@ public class Spaces : MonoBehaviour {
 
     //}
 
-    public void set_row_column(byte row_, byte column_)
+    public void set_row_column(int row_, int column_)
     {
         row = row_;
         column = column_;

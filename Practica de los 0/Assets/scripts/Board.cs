@@ -5,12 +5,12 @@ using UnityEngine.UI;
 using System;
 
 public class Board {
-    public byte rows, columns;
+    public int rows, columns;
 
     public Spaces[,] spaces;
     public GameObject[,] tablero;
 
-    public Board(byte _rows, byte _columns)
+    public Board(int _rows, int _columns)
     {
         rows = _rows;
         columns = _columns;
@@ -20,9 +20,9 @@ public class Board {
         evaluacion_spaces();
         buscar_cuadrados(_active_player);
 
-        for (byte row = 1; row <= rows; row++)
+        for (int row = 1; row <= rows; row++)
         {
-            for (byte column = 1; column <= columns; column++)
+            for (int column = 1; column <= columns; column++)
             {
                 if (row % 2 != 0)//si la fila es impar
                 {
@@ -52,7 +52,7 @@ public class Board {
         
 
     }
-    public void actualizarlo(byte _row, byte _column) //aztualiza los colores
+    public void actualizarlo(int _row, int _column) //aztualiza los colores
     {
         if (spaces[_row, _column].state == Spaces.State.normal ) 
         {
@@ -69,9 +69,9 @@ public class Board {
     }
     public void evaluacion_spaces() //
     {
-        for (byte row = 1; row <= rows; row++)
+        for (int row = 1; row <= rows; row++)
         {
-            for (byte column = 1; column <= columns; column++)
+            for (int column = 1; column <= columns; column++)
             {
                 if (row % 2 != 0)//si la fila es impar
                 {
@@ -115,10 +115,10 @@ public class Board {
     }
     public void buscar_cuadrados(string _active_player)
     {
-        for (byte row = 0; row < rows-2; row++)
+        for (int row = 0; row < rows-2; row++)
         {
 
-            for (byte column = 0; column < columns; column++)
+            for (int column = 0; column < columns; column++)
             {
                 if ((row+1) % 2 != 0 )//si la fila es impar
                 {
@@ -149,23 +149,23 @@ public class Board {
     }
     public void Debug_spaces()
     {
-        for (byte row = 0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
-            for (byte column = 0; column < columns; column++)
+            for (int column = 0; column < columns; column++)
             {
 
             }
 
         }
-        for (byte row = 0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
-            for (byte column = 0; column < columns; column++)
+            for (int column = 0; column < columns; column++)
             {
                 if ((row + 1) % 2 != 0)//si la fila es impar
                 {
                     if ((column + 1) % 2 == 0)//si la columna es par(horizontal)
                     {
-                        tablero[row, column].GetComponent<Spaces>().space = spaces[row, column].state;
+                        tablero[row, column].GetComponent<Spaces>().state = spaces[row, column].state;
 
 
                     }
@@ -174,7 +174,7 @@ public class Board {
                 {
                     if ((column + 1) % 2 != 0)//si la columna es impar (vertical)
                     {
-                        tablero[row, column].GetComponent<Spaces>().space = spaces[row, column].state;
+                        tablero[row, column].GetComponent<Spaces>().state = spaces[row, column].state;
                     }
 
                 }
