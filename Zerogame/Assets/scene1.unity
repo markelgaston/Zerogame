@@ -802,8 +802,8 @@ MonoBehaviour:
   lines_container: {fileID: 1100043591}
   texts_container: {fileID: 1251725624}
   text: {fileID: 616898951}
-  rows: 7
-  columns: 7
+  rows: 3
+  columns: 3
   distance: 70
   panel: {fileID: 1824114170}
   active_player: 

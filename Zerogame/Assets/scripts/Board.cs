@@ -20,32 +20,14 @@ public class Board {
         lineEvaluation();
         findSquares(_active_player);
 
-        for (int row = 1; row <= rows; row++)
+        for (int row = 0; row < lines.GetLength(0); row++)
         {
-            for (int column = 1; column <= columns; column++)
+            for (int column = 0; column < lines.GetLength(1); column++)
             {
-                if (row % 2 != 0)
+                if (lines[row, column] != null)
                 {
-                    if (column % 2 != 0)    //cricle
-                    {        
-                    }
-                    if (column % 2 == 0)    //horizontal
-                    {
-                        changeColour(Convert.ToByte(row - 1), Convert.ToByte(column - 1));
-                    }
+                    changeColour(row, column);
                 }
-                if (row % 2 == 0)
-                {
-                    if (column % 2 != 0)    //vertical
-                    {
-                        changeColour(Convert.ToByte(row - 1), Convert.ToByte(column - 1));
-                    }
-                    if (column % 2 == 0)
-                    {
-                        //nothing
-                    }
-                }
-
             }
 
         }
@@ -56,129 +38,65 @@ public class Board {
     {
         if (lines[_row, _column].state == Line.State.idle ) 
         {
-            boardElements[_row, _column].GetComponent<Image>().color = Color.green;
+            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.green;
         }
         if (lines[_row, _column].state == Line.State.pressed)
         {
-            boardElements[_row, _column].GetComponent<Image>().color = Color.red;
+            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.red;
         }
         if (lines[_row, _column].state == Line.State.square)
         {
-            boardElements[_row, _column].GetComponent<Image>().color = Color.magenta;
+            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.magenta;
         }
     }
-    public void lineEvaluation() //
+    public void lineEvaluation() //SIN TERMINAR
     {
-        for (int row = 1; row <= rows; row++)
+        for (int row = 0; row < lines.GetLength(0); row++)
         {
-            for (int column = 1; column <= columns; column++)
+            for (int column = 0; column < lines.GetLength(1); column++)
             {
-                if (row % 2 != 0)//uneven
-                {
-                    if (column % 2 != 0)//circle
+                if (lines[row, column] != null) {
+                    if (lines[row, column].pressed == false)
                     {
+                        lines[row, column].state = Line.State.idle;
                     }
-                    if (column % 2 == 0)//horizontal
+                    else if (lines[row, column].pressed == true && lines[row, column].state == Line.State.idle)
                     {
-                        if (lines[row - 1, column - 1].pressed == false)
-                        {
-                            lines[row - 1, column - 1].state = Line.State.idle;
-                        }
-                        else if(lines[row - 1, column - 1].pressed == true && lines[row-1, column-1].state == Line.State.idle)
-                        {
-                            lines[row - 1, column - 1].state = Line.State.pressed;
-                        }
+                        lines[row, column].state = Line.State.pressed;
                     }
                 }
-                if (row % 2 == 0)//even
-                {
-                    if (column % 2 != 0)//vertical
-                    {
-                        if (boardElements[row - 1, column - 1].GetComponent<Line>().pressed == false)
-                        {
-                            lines[row - 1, column - 1].state = Line.State.idle;
-                        }
-                        else if (boardElements[row - 1, column - 1].GetComponent<Line>().pressed == true && lines[row - 1, column - 1].state == Line.State.idle)
-                        {
-                            lines[row - 1, column - 1].state = Line.State.pressed;
-                        }
-                    }
-                    if (column % 2 == 0)//even
-                    {
-                        //nothing
-                    }
-                }
-
             }
 
         }
+        
     }
     public void findSquares(string _active_player)
     {
-        for (int row = 0; row < rows-2; row++)
+
+        for (int row = 1; row < lines.GetLength(0); row+=2)
         {
-
-            for (int column = 0; column < columns; column++)
+            for (int column = 0; column < lines.GetLength(1)-1; column++)
             {
-                if ((row+1) % 2 != 0 )//uneven
+                if (lines[row, column] != null)
                 {
-                    if ((column+1) % 2 == 0 )//horizontal
+                    if (lines[row, column].pressed == true &&
+                            lines[row-1,column].pressed == true &&
+                            lines[row+1,column].pressed == true &&
+                            lines[row,column+1].pressed == true)
                     {
-                        //eveluation from square center
-                        if (lines[row, column].pressed == true &&
-                            lines[row + 2, column].pressed == true &&
-                            lines[row + 1, column + 1].pressed == true &&
-                            lines[row + 1, column - 1].pressed == true)
+                        lines[row, column].state = Line.State.square;
+                        lines[row - 1, column].state = Line.State.square;
+                        lines[row + 1, column].state = Line.State.square;
+                        lines[row, column + 1].state = Line.State.square;
+                        
+                        if (boardElements[row, column*2 + 1].GetComponent<Text>().text == "")
                         {
-                            lines[row, column].state = Line.State.square;
-                            lines[row + 2, column].state = Line.State.square;
-                            lines[row + 1, column + 1].state = Line.State.square;
-                            lines[row + 1, column - 1].state = Line.State.square;
-
-                            if (boardElements[row + 1, column].GetComponent<Text>().text=="") {
-                                boardElements[row + 1, column].GetComponent<Text>().text = _active_player;
-                            }
+                            boardElements[row, column*2 +1].GetComponent<Text>().text = _active_player;
                         }
                     }
                 }
-
             }
 
-        }
-    }
-    public void Debug_spaces()
-    {
-        for (int row = 0; row < rows; row++)
-        {
-            for (int column = 0; column < columns; column++)
-            {
-
-            }
-
-        }
-        for (int row = 0; row < rows; row++)
-        {
-            for (int column = 0; column < columns; column++)
-            {
-                if ((row + 1) % 2 != 0)//si la fila es impar
-                {
-                    if ((column + 1) % 2 == 0)//si la columna es par(horizontal)
-                    {
-                        boardElements[row, column].GetComponent<Line>().state = lines[row, column].state;
-
-
-                    }
-                }
-                if ((row + 1) % 2 == 0)//si la fila es par
-                {
-                    if ((column + 1) % 2 != 0)//si la columna es impar (vertical)
-                    {
-                        boardElements[row, column].GetComponent<Line>().state = lines[row, column].state;
-                    }
-
-                }
-
-            }
         }
     }
 }
