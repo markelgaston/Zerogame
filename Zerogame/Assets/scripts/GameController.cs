@@ -80,6 +80,7 @@ public class GameController : MonoBehaviour
                         s_columns++;
                     }
                 }
+
                 if ((row + 1) % 2 == 0)
                 {
                     if ((column + 1) % 2 != 0)
@@ -144,7 +145,7 @@ public class GameController : MonoBehaviour
 
         if (active_player == "Ai")
         {
-            //ai.play(board);
+            ai.play(board);
             end_turn();
         }
 

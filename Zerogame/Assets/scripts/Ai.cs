@@ -6,6 +6,7 @@ public class Ai {
 
     private Board board;
     private Scoringmove scoringmove;
+    public int MAX_DEPTH;
 
     public void play(Board _board)
     {
@@ -55,4 +56,52 @@ public class Ai {
         }
         scoringmove = best_play;
     }
+
+    /*Scoringmove Minimax(Board board, int depth)
+    {
+        int bestMove = 0;
+        int bestScore = 0;
+        Scoringmove scoringMove;
+        Board newBoard;
+        // Comprobar si hemos terminado de hacer recursión, por 2 posibles motivos:
+        // 1. hemos llegado a una jugada terminal.
+        // 2. hemos alcanzado la máxima profundidad que nos permite nuestra inteligencia.
+        if (board.IsEndOfGame() || depth == MAX_DEPTH)
+        {
+            scoringMove = new Scoringmove(board.Evaluate(activePlayer), 0);
+        }
+        else
+        {
+            if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITY;
+            else bestScore = INFINITY;
+            int[] possibleMoves;
+            possibleMoves = board.PossibleMoves();
+            foreach (int move in possibleMoves)
+            {
+                newBoard = board.GenerateNewBoardFromMove(move);
+            }
+            // Recursividad
+            scoringMove = Minimax(newBoard, depth + 1);
+            // Actualizar mejor score si obtenemos una jugada mejor.
+            // Hay que comprobar si es un movimiento del contrario o nuestro, para interpretar qué es "mejor".
+            if (board.activePlayer == activePlayer)
+            {
+                if (scoringMove.score > bestScore)
+                {
+                    bestScore = scoringMove.score;
+                    bestMove = move;
+                }
+            }
+            else
+            {
+                if (scoringMove.score < bestScore)
+                {
+                    bestScore = scoringMove.score;
+                    bestMove = move;
+                }
+            }
+        }
+        scoringMove = new ScoringMove(bestScore, bestMove);
+    }*/
+ //return scoringMove;
 }
