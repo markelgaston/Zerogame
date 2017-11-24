@@ -10,74 +10,70 @@ public class ButtonController : MonoBehaviour {
 
     public string type = null;
 
-	void Update()
+    private RectTransform rectTransform;
+
+    private Vector2 enterSize = new Vector2();
+    private Vector2 exitSize = new Vector2();
+
+    private void Start()
+    {
+        rectTransform = GetComponent<RectTransform>();
+    }
+
+    void Update()
     {
 
         //raya_vertical
-        if (type== "v_line") {
+        if (type == "v_line")
+        {
             if (control == 1)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(125, 325), spd * Time.deltaTime);
+                enterSize = new Vector2(125, 325);
 
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 125)
-                {
-                    control = 0;
-                }
-            }
             if (control == 2)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(100, 300), spd * Time.deltaTime);
-
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 100)
-                {
-                    control = 0;
-                }
-            }
+                exitSize = new Vector2(100, 300);
         }
+
         //raya_horizontal
-        if (type == "h_line")
+        else if (type == "h_line")
         {
             if (control == 1)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(325, 125), spd * Time.deltaTime);
+                enterSize = new Vector2(325, 125);
 
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 125)
-                {
-                    control = 0;
-                }
-            }
             if (control == 2)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(300, 100), spd * Time.deltaTime);
-
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 100)
-                {
-                    control = 0;
-                }
-            }
+                exitSize = new Vector2(300, 100);
         }
+
         //circulo
-        if (type == "circle")
+        else if (type == "circle")
         {
             if (control == 1)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(125, 125), spd * Time.deltaTime);
+                enterSize = new Vector2(125, 125);
 
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 125)
-                {
-                    control = 0;
-                }
-            }
             if (control == 2)
-            {
-                this.GetComponent<RectTransform>().sizeDelta = Vector2.Lerp(this.GetComponent<RectTransform>().sizeDelta, new Vector2(100, 100), spd * Time.deltaTime);
+                exitSize = new Vector2(100, 100);
+        }
 
-                if (this.GetComponent<RectTransform>().sizeDelta.x == 100)
-                {
-                    control = 0;
-                }
+        if (control == 1)
+        {
+            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, enterSize, spd * Time.deltaTime);
+
+            if (rectTransform.sizeDelta.x == 125)
+            {
+                control = 0;
             }
         }
+
+        else if (control == 2)
+        {
+            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, exitSize, spd * Time.deltaTime);
+
+            if (rectTransform.sizeDelta.x == 100)
+            {
+                control = 0;
+            }
+        }
+
+
     }
     public void on_hover_enter()
     {
