@@ -88,10 +88,11 @@ public class ButtonController : MonoBehaviour {
     {
         control = 2;
     }
+
     public void on_press()
     {
         Line line = gameObject.GetComponent<Line>();
-        line.set_pressed(true);
+        line.set_pressed(Line.State.pressed);
     }
 
 }

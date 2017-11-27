@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardLine : MonoBehaviour {
+public class Line : MonoBehaviour {
 
     
     public int row, column;
@@ -26,17 +26,17 @@ public class BoardLine : MonoBehaviour {
 
     public void set_row_column(int row_, int column_)
     {
-            row = row_;
-            column = column_;
-        }
+        row = row_;
+        column = column_;
     }
 
-    /*public void set_pressed(State state)
+    public void set_pressed(State state)
     {
-        if (state.pressed !=)
-        {
-            state = State.pressed;
-        }
-    }*/
+        //if (state.pressed !=)
+        //{
+        //      state = State.pressed;
+        //}
+        pressed = true;
+    }
 	
 }
