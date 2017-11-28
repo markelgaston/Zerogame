@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class ButtonController : MonoBehaviour {
 
-    public float spd = 0.5f;
+    public float spd = 10;
     public int control = 0;
 
     public string type = null;
@@ -57,7 +57,7 @@ public class ButtonController : MonoBehaviour {
             }
         }
         //circulo
-        if (type == "circle")
+        /*if (type == "circle")
         {
             if (control == 1)
             {
@@ -77,7 +77,7 @@ public class ButtonController : MonoBehaviour {
                     control = 0;
                 }
             }
-        }
+        }*/
     }
     public void on_hover_enter()
     {
@@ -92,7 +92,7 @@ public class ButtonController : MonoBehaviour {
     public void on_press()
     {
         Line line = gameObject.GetComponent<Line>();
-        line.set_pressed(Line.State.pressed);
+        line.Set_Pressed();
     }
 
 }

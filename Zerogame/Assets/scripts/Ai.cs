@@ -8,6 +8,9 @@ public class Ai
     private Board board;
     private Scoringmove scoringmove;
     public int MAX_DEPTH;
+    public const int MINUS_INFINITE = -99999;
+    public const int INFINITE = 99999;
+
 
     public void play(Board _board)
     {
@@ -59,51 +62,196 @@ public class Ai
         scoringmove = best_play;
     }
 
-    /*Scoringmove Minimax(Board board, int depth)
+    /*
+    
+    Scoringmove Minimax(Board board, byte depth)
     {
+        // Devuelve el score del tablero y la jugada con la que se llega a él.
         int bestMove = 0;
         int bestScore = 0;
-        Scoringmove scoringMove;
+        Scoringmove scoringMove; // score, movimiento
         Board newBoard;
-        // Comprobar si hemos terminado de hacer recursión, por 2 posibles motivos:
-        // 1. hemos llegado a una jugada terminal.
-        // 2. hemos alcanzado la máxima profundidad que nos permite nuestra inteligencia.
+        // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
             scoringMove = new Scoringmove(board.Evaluate(activePlayer), 0);
         }
         else
         {
-            if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITY;
-            else bestScore = INFINITY;
+            if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITE;
+            else bestScore = INFINITE;
+
             int[] possibleMoves;
             possibleMoves = board.PossibleMoves();
+
             foreach (int move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
-            }
-            // Recursividad
-            scoringMove = Minimax(newBoard, depth + 1);
-            // Actualizar mejor score si obtenemos una jugada mejor.
-            // Hay que comprobar si es un movimiento del contrario o nuestro, para interpretar qué es "mejor".
-            if (board.activePlayer == activePlayer)
-            {
-                if (scoringMove.score > bestScore)
+
+                // Recursividad
+                scoringMove = Minimax(newBoard, (byte)(depth + 1));
+
+                // Actualizar mejor score
+                if (board.activePlayer == activePlayer)
                 {
-                    bestScore = scoringMove.score;
-                    bestMove = move;
+                    if (scoringMove.score > bestScore)
+                    {
+                        bestScore = scoringMove.score;
+                        bestMove = move;
+                    }
                 }
+                else
+                {
+                    if (scoringMove.score < bestScore)
+                    {
+                        bestScore = scoringMove.score;
+                        bestMove = move;
+                    }
+                }
+            }
+            scoringMove = new Scoringmove(bestScore, bestMove);
+        }
+        return scoringMove;
+    }
+
+    ScoringMove Negamax(Board board, byte depth)
+    {
+        // Devuelve el score del tablero y la jugada con la que se llega a él.
+        int bestMove = 0;
+        int bestScore = 0;
+        ScoringMove scoringMove; // score, movimiento
+        Board newBoard;
+        // Comprobar si hemos terminado de hacer recursión
+        if (board.IsEndOfGame() || depth == MAX_DEPTH)
+        {
+            if (depth % 2 == 0)
+            {
+                scoringMove = new ScoringMove(board.Evaluate(activePlayer), 0);
             }
             else
             {
-                if (scoringMove.score < bestScore)
+                scoringMove = new ScoringMove(-board.Evaluate(activePlayer), 0);
+            }
+        }
+        else
+        {
+            bestScore = MINUS_INFINITE;
+
+            int[] possibleMoves;
+            possibleMoves = board.PossibleMoves();
+
+            foreach (int move in possibleMoves)
+            {
+                newBoard = board.GenerateNewBoardFromMove(move);
+
+                // Recursividad
+                scoringMove = Negamax(newBoard, (byte)(depth + 1));
+
+                int invertedScore = -scoringMove.score;
+
+                // Actualizar mejor score
+                if (invertedScore > bestScore)
                 {
-                    bestScore = scoringMove.score;
+                    bestScore = invertedScore;
                     bestMove = move;
                 }
             }
+            scoringMove = new ScoringMove(bestScore, bestMove);
         }
-        scoringMove = new ScoringMove(bestScore, bestMove);
-    }*/
- //return scoringMove;
+        return scoringMove;
+    }
+
+    ScoringMove NegamaxAB(Board board, byte depth, int alfa, int beta)
+    {
+        // Devuelve el score del tablero y la jugada con la que se llega a él.
+        int bestMove = 0;
+        int bestScore = 0;
+
+        ScoringMove scoringMove; // score, movimiento
+        Board newBoard;
+        // Comprobar si hemos terminado de hacer recursión
+        if (board.IsEndOfGame() || depth == MAX_DEPTH)
+        {
+            if (depth % 2 == 0)
+            {
+                scoringMove = new ScoringMove(board.Evaluate(activePlayer), 0);
+            }
+            else
+            {
+                scoringMove = new ScoringMove(-board.Evaluate(activePlayer), 0);
+            }
+        }
+        else
+        {
+            bestScore = MINUS_INFINITE;
+
+            int[] possibleMoves;
+            possibleMoves = board.PossibleMoves();
+
+            foreach (int move in possibleMoves)
+            {
+                newBoard = board.GenerateNewBoardFromMove(move);
+
+                // Recursividad
+                scoringMove = NegamaxAB(newBoard, (byte)(depth + 1), -beta, -Math.Max(alfa, bestScore));
+
+                int invertedScore = -scoringMove.score;
+
+                // Actualizar mejor score
+                if (invertedScore > bestScore)
+                {
+                    bestScore = invertedScore;
+                    bestMove = move;
+                }
+                if (bestScore >= beta)
+                {
+                    scoringMove = new ScoringMove(bestScore, bestMove);
+                    return scoringMove;
+                }
+            }
+            scoringMove = new ScoringMove(bestScore, bestMove);
+        }
+        return scoringMove;
+    }
+
+    ScoringMove AspirationSearch(Board board)
+    {
+        int alfa, beta;
+        ScoringMove move;
+        string aspirationPath = "Aspiration Path: ";
+
+        if (previousScore != MINUS_INFINITE)
+        {
+            alfa = previousScore - windowRange;
+            beta = previousScore + windowRange;
+            while (true)
+            {
+                move = NegamaxAB(board, 0, alfa, beta);
+                if (move.score <= alfa)
+                {
+                    aspirationPath += "Fail soft alfa.";
+                    alfa = MINUS_INFINITE;
+                }
+                else if (move.score >= beta)
+                {
+                    aspirationPath += "Fail soft beta.";
+                    beta = INFINITE;
+                }
+                else
+                {
+                    aspirationPath += "Success";
+                    break;
+                }
+            }
+        }
+        else
+        {
+            aspirationPath += "Normal Negamax";
+            move = NegamaxAB(board, 0, MINUS_INFINITE, INFINITE);
+        }
+        previousScore = move.score;
+        aspirationPathText.text = aspirationPath;
+        return move;
+    }
+    */
 }

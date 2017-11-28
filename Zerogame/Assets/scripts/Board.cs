@@ -99,4 +99,41 @@ public class Board {
 
         }
     }
+
+    /// <summary>
+    /// Comprueba si están todas las casillas marcadas
+    /// </summary>
+    /// <returns></returns>
+    public bool IsEndOfGame()
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// Devuelve un valor del tablero
+    /// </summary>
+    /// <returns></returns>
+    public int Evaluate()
+    {
+        return 0;
+    }
+
+    /// <summary>
+    /// Todas los posibles movimientos de un estado del tablero
+    /// </summary>
+    /// <returns></returns>
+    public int[] PossibleMoves()
+    {
+        return new int[0];
+    }
+
+    /// <summary>
+    /// Crea un nuevo tablero a partir de un movimiento
+    /// </summary>
+    /// <param name="move"></param>
+    /// <returns></returns>
+    public Board GenerateNewBoardFromMove(int move)
+    {
+        return new Board(0, 0);
+    }
 }

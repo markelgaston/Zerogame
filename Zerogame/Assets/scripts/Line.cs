@@ -30,7 +30,7 @@ public class Line : MonoBehaviour {
         column = column_;
     }
 
-    public void set_pressed(State state)
+    public void Set_Pressed()
     {
         //if (state.pressed !=)
         //{
