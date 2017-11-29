@@ -7,6 +7,7 @@ public class Ai
 
     private Board board;
     private Scoringmove scoringmove;
+    private string activePlayer;
     public int MAX_DEPTH;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
@@ -61,30 +62,29 @@ public class Ai
         }
         scoringmove = best_play;
     }
-
-    /*
+    
     
     Scoringmove Minimax(Board board, byte depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.
-        int bestMove = 0;
+        Scoringmove.Move bestMove = new Scoringmove.Move() { row = 0, column = 0 };
         int bestScore = 0;
         Scoringmove scoringMove; // score, movimiento
         Board newBoard;
         // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
-            scoringMove = new Scoringmove(board.Evaluate(activePlayer), 0);
+            scoringMove = new Scoringmove(board.Evaluate(activePlayer), new Scoringmove.Move() { row = 0, column = 0 });
         }
         else
         {
             if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITE;
             else bestScore = INFINITE;
 
-            int[] possibleMoves;
+            Scoringmove.Move[] possibleMoves;
             possibleMoves = board.PossibleMoves();
 
-            foreach (int move in possibleMoves)
+            foreach (Scoringmove.Move move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
 
@@ -113,7 +113,7 @@ public class Ai
         }
         return scoringMove;
     }
-
+    /*
     ScoringMove Negamax(Board board, byte depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.

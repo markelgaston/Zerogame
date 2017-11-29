@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class Board {
+public class Board
+{
     public int rows, columns;
 
     public Line[,] lines;
     public GameObject[,] boardElements;
+
+    public string activePlayer;
 
     public Board(int _rows, int _columns)
     {
@@ -31,12 +34,12 @@ public class Board {
             }
 
         }
-        
+
 
     }
     public void changeColour(int _row, int _column) //aztualiza los colores
     {
-        if (lines[_row, _column].state == Line.State.idle ) 
+        if (lines[_row, _column].state == Line.State.idle)
         {
             lines[_row, _column].gameObject.GetComponent<Image>().color = Color.green;
         }
@@ -55,7 +58,8 @@ public class Board {
         {
             for (int column = 0; column < lines.GetLength(1); column++)
             {
-                if (lines[row, column] != null) {
+                if (lines[row, column] != null)
+                {
                     if (lines[row, column].pressed == false)
                     {
                         lines[row, column].state = Line.State.idle;
@@ -68,30 +72,31 @@ public class Board {
             }
 
         }
-        
+
     }
+
     public void findSquares(string _active_player)
     {
 
-        for (int row = 1; row < lines.GetLength(0); row+=2)
+        for (int row = 1; row < lines.GetLength(0); row += 2)
         {
-            for (int column = 0; column < lines.GetLength(1)-1; column++)
+            for (int column = 0; column < lines.GetLength(1) - 1; column++)
             {
                 if (lines[row, column] != null)
                 {
                     if (lines[row, column].pressed == true &&
-                            lines[row-1,column].pressed == true &&
-                            lines[row+1,column].pressed == true &&
-                            lines[row,column+1].pressed == true)
+                            lines[row - 1, column].pressed == true &&
+                            lines[row + 1, column].pressed == true &&
+                            lines[row, column + 1].pressed == true)
                     {
                         lines[row, column].state = Line.State.square;
                         lines[row - 1, column].state = Line.State.square;
                         lines[row + 1, column].state = Line.State.square;
                         lines[row, column + 1].state = Line.State.square;
-                        
-                        if (boardElements[row, column*2 + 1].GetComponent<Text>().text == "")
+
+                        if (boardElements[row, column * 2 + 1].GetComponent<Text>().text == "")
                         {
-                            boardElements[row, column*2 +1].GetComponent<Text>().text = _active_player;
+                            boardElements[row, column * 2 + 1].GetComponent<Text>().text = _active_player;
                         }
                     }
                 }
@@ -104,27 +109,79 @@ public class Board {
     /// Comprueba si están todas las casillas marcadas
     /// </summary>
     /// <returns></returns>
+    string Opponent(string player)
+    {
+        if (player == "Ai")
+        {
+            return "Player";
+        }
+        else
+        {
+            return "Ai";
+        }
+    }
+
+    /// <summary>
+    /// Comprueba si están todas las casillas marcadas
+    /// </summary>
+    /// <returns></returns>
     public bool IsEndOfGame()
     {
-        return false;
+        for (int row = 0; row < lines.GetLength(0); row++)
+        {
+            for (int column = 0; column < lines.GetLength(1); column++)
+            {
+                if (lines[row, column] != null)
+                    if (lines[row, column].state == Line.State.idle)
+                        return false;
+            }
+        }
+        return true;
     }
 
     /// <summary>
     /// Devuelve un valor del tablero
     /// </summary>
     /// <returns></returns>
-    public int Evaluate()
+    public int Evaluate(string activePlayer)
     {
-        return 0;
+        throw new NotImplementedException();
     }
 
     /// <summary>
     /// Todas los posibles movimientos de un estado del tablero
     /// </summary>
     /// <returns></returns>
-    public int[] PossibleMoves()
+    public Scoringmove.Move[] PossibleMoves()
     {
-        return new int[0];
+        Scoringmove.Move[] moves;
+        int count = 0;
+
+        for (int row = 0; row < lines.GetLength(0); row++)
+        {
+            for (int column = 0; column < lines.GetLength(1); column++)
+            {
+                if (lines[row, column] != null)
+                    if (lines[row, column].state == Line.State.idle)
+                        count++;
+            }
+        }
+        moves = new Scoringmove.Move[count];
+        count = 0;
+        for (int row = 0; row < lines.GetLength(0); row++)
+        {
+            for (int column = 0; column < lines.GetLength(1); column++)
+            {
+                if (lines[row, column] != null)
+                {
+                    if (lines[row, column].state == Line.State.idle)
+                    {
+                        moves[count] = new Scoringmove.Move() { row = row, column = column };
+                    }
+                }
+            }
+        }
+        return moves;
     }
 
     /// <summary>
@@ -132,8 +189,25 @@ public class Board {
     /// </summary>
     /// <param name="move"></param>
     /// <returns></returns>
-    public Board GenerateNewBoardFromMove(int move)
+    public Board GenerateNewBoardFromMove(Scoringmove.Move move)
     {
-        return new Board(0, 0);
+        Board newBoard = DuplicateBoard();
+        newBoard.lines[move.row, move.column].state = Line.State.pressed;
+        newBoard.activePlayer = Opponent(newBoard.activePlayer);
+        return newBoard;
+    }
+
+    private Board DuplicateBoard()
+    {
+        Board newBoard = new Board(rows, columns);
+        for (byte row = 0; row < rows; row++)
+        {
+            for (byte column = 0; column < columns; column++)
+            {
+                newBoard.lines[row, column] = this.lines[row, column];
+            }
+        }
+        newBoard.activePlayer = this.activePlayer;
+        return newBoard;
     }
 }
