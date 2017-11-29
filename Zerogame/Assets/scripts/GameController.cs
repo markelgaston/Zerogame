@@ -32,8 +32,15 @@ public class GameController : MonoBehaviour
     //ActivePlayer
     public string active_player;
 
+    public static GameController Instance;
+
     private void Awake()
     {
+        if (Instance != null || Instance == this)
+            Destroy(this);
+        else
+            Instance = this;
+
         int realRows = rows * 2 + 1;
         int realColumns = columns * 2 + 1;
 
@@ -51,7 +58,8 @@ public class GameController : MonoBehaviour
 
         Vector3 pos = this.transform.position;
 
-       
+        int count = 0;
+
         //Instantiate square/circle
         for (int row = 0; row < realRows; row++)
         {
@@ -63,16 +71,17 @@ public class GameController : MonoBehaviour
                     {
                         GameObject obj = Instantiate(circle, pos, this.transform.rotation, this.transform);
                         obj.GetComponent<Line>().set_row_column(row, column);
-                        obj.GetComponent<ButtonController>().type = "circle";
+                        //obj.GetComponent<ButtonController>().type = "circle";
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(circles_container.transform, true);
                     }
                     if ((column + 1) % 2 == 0)
                     {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
+                        obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
                         obj.GetComponent<Line>().set_row_column(row, column);
-                        obj.GetComponent<ButtonController>().type = "h_line";                       
+                        //obj.GetComponent<ButtonController>().type = "h_line";                       
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 
@@ -86,9 +95,10 @@ public class GameController : MonoBehaviour
                     if ((column + 1) % 2 != 0)
                     {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
+                        obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 300);
                         obj.GetComponent<Line>().set_row_column(row, column);
-                        obj.GetComponent<ButtonController>().type = "v_line";
+                        //obj.GetComponent<ButtonController>().type = "v_line";
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 

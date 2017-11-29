@@ -18,9 +18,10 @@ public class Board
         rows = _rows;
         columns = _columns;
     }
+
     public void updateColours(string _active_player)
     {
-        lineEvaluation();
+        //lineEvaluation();
         findSquares(_active_player);
 
         for (int row = 0; row < lines.GetLength(0); row++)
@@ -34,7 +35,6 @@ public class Board
             }
 
         }
-
 
     }
     public void changeColour(int _row, int _column) //aztualiza los colores
@@ -60,11 +60,11 @@ public class Board
             {
                 if (lines[row, column] != null)
                 {
-                    if (lines[row, column].pressed == false)
+                    if (lines[row, column].state == Line.State.idle)
                     {
                         lines[row, column].state = Line.State.idle;
                     }
-                    else if (lines[row, column].pressed == true && lines[row, column].state == Line.State.idle)
+                    else if (lines[row, column].state == Line.State.pressed || lines[row, column].state == Line.State.square)
                     {
                         lines[row, column].state = Line.State.pressed;
                     }
@@ -74,7 +74,6 @@ public class Board
         }
 
     }
-
     public void findSquares(string _active_player)
     {
 
@@ -82,12 +81,13 @@ public class Board
         {
             for (int column = 0; column < lines.GetLength(1) - 1; column++)
             {
+                Debug.Log(lines[row, column].name);
                 if (lines[row, column] != null)
                 {
-                    if (lines[row, column].pressed == true &&
-                            lines[row - 1, column].pressed == true &&
-                            lines[row + 1, column].pressed == true &&
-                            lines[row, column + 1].pressed == true)
+                    if ((lines[row, column].state == Line.State.pressed || lines[row, column].state == Line.State.square) &&
+                            (lines[row - 1, column].state == Line.State.pressed || lines[row - 1, column].state == Line.State.square) &&
+                            (lines[row + 1, column].state == Line.State.pressed || lines[row + 1, column].state == Line.State.square) &&
+                            (lines[row, column + 1].state == Line.State.pressed || lines[row, column + 1].state == Line.State.square))
                     {
                         lines[row, column].state = Line.State.square;
                         lines[row - 1, column].state = Line.State.square;

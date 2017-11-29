@@ -22,12 +22,12 @@ public class Ai
     }
     public void move() //Realiza su movimiento
     {
-        board.boardElements[scoringmove.move.row, scoringmove.move.column].GetComponent<Line>().pressed = true;
+        board.boardElements[scoringmove.move.row, scoringmove.move.column].GetComponent<Line>().state = Line.State.pressed;
     }
 
     public void evaluate_best_play(int rows, int columns) //criterio: coge el primero que encuentra sin presionar
     {
-        Scoringmove best_play = new Scoringmove();
+        /*Scoringmove best_play = new Scoringmove();
 
         for (int row = 0; row < rows; row++)
         {
@@ -61,9 +61,10 @@ public class Ai
             }
         }
         scoringmove = best_play;
+        */
     }
-    
-    
+
+
     Scoringmove Minimax(Board board, byte depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.

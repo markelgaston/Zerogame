@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Line : MonoBehaviour {
+public class Line : MonoBehaviour
+{
 
-    
+
     public int row, column;
-
-    public bool pressed = false;
-    
-    //public State space = 0; //debug
 
     public enum State
     {
@@ -19,24 +16,19 @@ public class Line : MonoBehaviour {
     }
     public State state = State.idle;
 
-    //public Spaces()
-    //{
-
-    //}
-
     public void set_row_column(int row_, int column_)
     {
         row = row_;
         column = column_;
     }
 
-    public void Set_Pressed()
+    public void On_Pressed()
     {
-        //if (state.pressed !=)
-        //{
-        //      state = State.pressed;
-        //}
-        pressed = true;
+        if (state == State.idle)
+        {
+            state = State.pressed;
+            GameController.Instance.end_turn();
+        }
     }
-	
+
 }
