@@ -145,6 +145,35 @@ public class Board
     /// <returns></returns>
     public int Evaluate(string activePlayer)
     {
+        /*
+         * O O O
+         * O O O
+         * O O O
+         * */
+         
+        // Todas las líneas empiezan con un valor y se va cambiando el valor de las
+        // casillas contiguas a la línea pulsada
+
+        /*if (lines[row, column] != null)
+        {
+            if (row == 0)
+            {
+
+            }
+            else if (row == lines.GetLength(0) - 1)
+            {
+
+            }
+            if (column == 0)
+            {
+
+            }
+            else if (column == lines.GetLength(1) - 1)
+            {
+
+            }
+        }*/
+
         throw new NotImplementedException();
     }
 
