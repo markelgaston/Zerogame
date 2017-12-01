@@ -8,97 +8,60 @@ public class Board
 {
     public int rows, columns;
 
-    public Line[,] lines;
+    public Square[] squares;
+
     public GameObject[,] boardElements;
 
-    public string activePlayer;
+    public Line[,] lines;
+
+    public string activePlayer = "Player";
 
     public Board(int _rows, int _columns)
     {
         rows = _rows;
         columns = _columns;
     }
-
-    public void updateColours(string _active_player)
+    
+    public void UpdateColours(string _active_player, Line move)
     {
-        //lineEvaluation();
-        findSquares(_active_player);
+        bool anyClosedSquare = false;
+        List<Square> squaresClosed = new List<Square>();
 
-        for (int row = 0; row < lines.GetLength(0); row++)
+        foreach (Square square in move.ParentSquares)
         {
-            for (int column = 0; column < lines.GetLength(1); column++)
+            if (square.IsClosedSquare())
             {
-                if (lines[row, column] != null)
-                {
-                    changeColour(row, column);
-                }
+                anyClosedSquare = true;
+                squaresClosed.Add(square);
             }
-
         }
 
-    }
-    public void changeColour(int _row, int _column) //aztualiza los colores
-    {
-        if (lines[_row, _column].state == Line.State.idle)
-        {
-            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.green;
-        }
-        if (lines[_row, _column].state == Line.State.pressed)
-        {
-            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.red;
-        }
-        if (lines[_row, _column].state == Line.State.square)
-        {
-            lines[_row, _column].gameObject.GetComponent<Image>().color = Color.magenta;
-        }
-    }
-    public void lineEvaluation() //SIN TERMINAR
-    {
-        for (int row = 0; row < lines.GetLength(0); row++)
-        {
-            for (int column = 0; column < lines.GetLength(1); column++)
+        if (anyClosedSquare)
+            foreach (Square square in squaresClosed)
             {
-                if (lines[row, column] != null)
-                {
-                    if (lines[row, column].state == Line.State.idle)
-                    {
-                        lines[row, column].state = Line.State.idle;
-                    }
-                    else if (lines[row, column].state == Line.State.pressed || lines[row, column].state == Line.State.square)
-                    {
-                        lines[row, column].state = Line.State.pressed;
-                    }
-                }
+                square.SetClosedColor(Color.gray);
             }
-
-        }
+        else
+            move.SetColor(Color.red);
 
     }
-    public void findSquares(string _active_player)
+
+    public void FindSquares()
     {
+        int squareIndex = 0;
 
         for (int row = 1; row < lines.GetLength(0); row += 2)
         {
             for (int column = 0; column < lines.GetLength(1) - 1; column++)
             {
-                Debug.Log(lines[row, column].name);
                 if (lines[row, column] != null)
                 {
-                    if ((lines[row, column].state == Line.State.pressed || lines[row, column].state == Line.State.square) &&
-                            (lines[row - 1, column].state == Line.State.pressed || lines[row - 1, column].state == Line.State.square) &&
-                            (lines[row + 1, column].state == Line.State.pressed || lines[row + 1, column].state == Line.State.square) &&
-                            (lines[row, column + 1].state == Line.State.pressed || lines[row, column + 1].state == Line.State.square))
-                    {
-                        lines[row, column].state = Line.State.square;
-                        lines[row - 1, column].state = Line.State.square;
-                        lines[row + 1, column].state = Line.State.square;
-                        lines[row, column + 1].state = Line.State.square;
+                    squares[squareIndex].SetLine("W", lines[row, column], squares[squareIndex]);
+                    squares[squareIndex].SetLine("N", lines[row - 1, column], squares[squareIndex]);
+                    squares[squareIndex].SetLine("S", lines[row + 1, column], squares[squareIndex]);
+                    squares[squareIndex].SetLine("E", lines[row, column + 1], squares[squareIndex]);
 
-                        if (boardElements[row, column * 2 + 1].GetComponent<Text>().text == "")
-                        {
-                            boardElements[row, column * 2 + 1].GetComponent<Text>().text = _active_player;
-                        }
-                    }
+                    ++squareIndex;
                 }
             }
 
@@ -109,9 +72,9 @@ public class Board
     /// Comprueba si están todas las casillas marcadas
     /// </summary>
     /// <returns></returns>
-    string Opponent(string player)
+    public string Opponent()
     {
-        if (player == "Ai")
+        if (activePlayer == "Ai")
         {
             return "Player";
         }
@@ -127,15 +90,12 @@ public class Board
     /// <returns></returns>
     public bool IsEndOfGame()
     {
-        for (int row = 0; row < lines.GetLength(0); row++)
+        for (int i = 0; i < squares.Length; i++)
         {
-            for (int column = 0; column < lines.GetLength(1); column++)
-            {
-                if (lines[row, column] != null)
-                    if (lines[row, column].state == Line.State.idle)
-                        return false;
-            }
+            if (!squares[i].IsClosedSquare())
+                return false;
         }
+
         return true;
     }
 
@@ -143,7 +103,7 @@ public class Board
     /// Devuelve un valor del tablero
     /// </summary>
     /// <returns></returns>
-    public int Evaluate(string activePlayer)
+    public Line Evaluate(string activePlayer)
     {
         /*
          * O O O
@@ -174,6 +134,8 @@ public class Board
             }
         }*/
 
+
+
         throw new NotImplementedException();
     }
 
@@ -181,36 +143,20 @@ public class Board
     /// Todas los posibles movimientos de un estado del tablero
     /// </summary>
     /// <returns></returns>
-    public Scoringmove.Move[] PossibleMoves()
+    public List<Line> PossibleMoves()
     {
-        Scoringmove.Move[] moves;
-        int count = 0;
+        List<Line> availableLines = new List<Line>();
 
-        for (int row = 0; row < lines.GetLength(0); row++)
+        for (int i = 0; i < squares.Length; i++)
         {
-            for (int column = 0; column < lines.GetLength(1); column++)
+            for (int j = 0; j < 4; j++)
             {
-                if (lines[row, column] != null)
-                    if (lines[row, column].state == Line.State.idle)
-                        count++;
+                if (!squares[i].GetLine(j).IsPressed)
+                    availableLines.Add(squares[i].GetLine(j));
             }
         }
-        moves = new Scoringmove.Move[count];
-        count = 0;
-        for (int row = 0; row < lines.GetLength(0); row++)
-        {
-            for (int column = 0; column < lines.GetLength(1); column++)
-            {
-                if (lines[row, column] != null)
-                {
-                    if (lines[row, column].state == Line.State.idle)
-                    {
-                        moves[count] = new Scoringmove.Move() { row = row, column = column };
-                    }
-                }
-            }
-        }
-        return moves;
+
+        return availableLines;
     }
 
     /// <summary>
@@ -218,25 +164,26 @@ public class Board
     /// </summary>
     /// <param name="move"></param>
     /// <returns></returns>
-    public Board GenerateNewBoardFromMove(Scoringmove.Move move)
+    public Board GenerateNewBoardFromMove(Line move)
     {
         Board newBoard = DuplicateBoard();
-        newBoard.lines[move.row, move.column].state = Line.State.pressed;
-        newBoard.activePlayer = Opponent(newBoard.activePlayer);
+       // newBoard.lines[move.row, move.column].state = Line.State.pressed;
+
+        if(!GameController.Instance.IsSquare(move))
+            newBoard.activePlayer = Opponent();
+
         return newBoard;
     }
 
     private Board DuplicateBoard()
     {
         Board newBoard = new Board(rows, columns);
-        for (byte row = 0; row < rows; row++)
+        for (int i = 0; i < squares.Length; i++)
         {
-            for (byte column = 0; column < columns; column++)
-            {
-                newBoard.lines[row, column] = this.lines[row, column];
-            }
+            newBoard.squares[i] = this.squares[i];
         }
         newBoard.activePlayer = this.activePlayer;
+
         return newBoard;
     }
 }

@@ -6,7 +6,7 @@ public class Ai
 {
 
     private Board board;
-    private Scoringmove scoringmove;
+    private Line move;
     private string activePlayer;
     public int MAX_DEPTH;
     public const int MINUS_INFINITE = -99999;
@@ -17,12 +17,13 @@ public class Ai
     {
         board = _board;
 
+        Minimax(_board, 0);
         //evaluate_best_play(board.rows,board.columns);
         //move();
     }
-    public void move() //Realiza su movimiento
+    public void Move(Line move) //Realiza su movimiento
     {
-        board.boardElements[scoringmove.move.row, scoringmove.move.column].GetComponent<Line>().state = Line.State.pressed;
+        GameController.Instance.End_Turn(move);
     }
 
     public void evaluate_best_play(int rows, int columns) //criterio: coge el primero que encuentra sin presionar
@@ -65,27 +66,27 @@ public class Ai
     }
 
 
-    Scoringmove Minimax(Board board, byte depth)
+    Line Minimax(Board board, byte depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.
-        Scoringmove.Move bestMove = new Scoringmove.Move() { row = 0, column = 0 };
+        Line bestMove;
         int bestScore = 0;
-        Scoringmove scoringMove; // score, movimiento
+        Line scoringMove = null; // score, movimiento
         Board newBoard;
         // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
-            scoringMove = new Scoringmove(board.Evaluate(activePlayer), new Scoringmove.Move() { row = 0, column = 0 });
+            scoringMove = board.Evaluate(activePlayer);
         }
         else
         {
             if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITE;
             else bestScore = INFINITE;
 
-            Scoringmove.Move[] possibleMoves;
+            List<Line> possibleMoves = new List<Line>();
             possibleMoves = board.PossibleMoves();
 
-            foreach (Scoringmove.Move move in possibleMoves)
+            foreach (Line move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
 
@@ -95,22 +96,22 @@ public class Ai
                 // Actualizar mejor score
                 if (board.activePlayer == activePlayer)
                 {
-                    if (scoringMove.score > bestScore)
+                    if (scoringMove.Score > bestScore)
                     {
-                        bestScore = scoringMove.score;
+                        bestScore = scoringMove.Score;
                         bestMove = move;
                     }
                 }
                 else
                 {
-                    if (scoringMove.score < bestScore)
+                    if (scoringMove.Score < bestScore)
                     {
-                        bestScore = scoringMove.score;
+                        bestScore = scoringMove.Score;
                         bestMove = move;
                     }
                 }
             }
-            scoringMove = new Scoringmove(bestScore, bestMove);
+            return scoringMove;
         }
         return scoringMove;
     }

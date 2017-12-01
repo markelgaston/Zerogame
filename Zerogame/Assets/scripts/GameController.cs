@@ -10,12 +10,12 @@ public class GameController : MonoBehaviour
 
     public GameObject circle;
     public GameObject line;
+    public GameObject text;
 
     public GameObject circles_container;
     public GameObject lines_container;
     public GameObject texts_container;
 
-    public GameObject text;
 
     public int rows, columns;
 
@@ -23,14 +23,13 @@ public class GameController : MonoBehaviour
 
     public RectTransform panel;
 
-    //board
     public Board board;
 
-    //AI
-    public Ai ai;
+    List<GameObject> boardElements = new List<GameObject>();
 
-    //ActivePlayer
-    public string active_player;
+    Ai ai;
+    
+
 
     public static GameController Instance;
 
@@ -41,24 +40,25 @@ public class GameController : MonoBehaviour
         else
             Instance = this;
 
+        ai = new Ai();
+
         int realRows = rows * 2 + 1;
         int realColumns = columns * 2 + 1;
 
-        //columns and rows for LINE
-        int s_rows = 0;
-        int s_columns = 0;
-
-        active_player = "Player";
-
-        board = new Board(rows, columns);
-        board.lines = new Line[rows * 2 + 1, columns + 1];
-        board.boardElements = new GameObject[realRows, realColumns];
-
-        ai = new Ai();
+        int count = 0;
 
         Vector3 pos = this.transform.position;
 
-        int count = 0;
+        int s_rows = 0,
+            s_columns = 0;
+
+        board = new Board(rows, columns);
+
+        board.boardElements = new GameObject[realRows, realColumns];
+
+        CreateBoard();
+
+        board.lines = new Line[rows * 2 + 1, columns + 1];
 
         //Instantiate square/circle
         for (int row = 0; row < realRows; row++)
@@ -70,8 +70,8 @@ public class GameController : MonoBehaviour
                     if ((column + 1) % 2 != 0)
                     {
                         GameObject obj = Instantiate(circle, pos, this.transform.rotation, this.transform);
-                        obj.GetComponent<Line>().set_row_column(row, column);
-                        //obj.GetComponent<ButtonController>().type = "circle";
+                        //obj.GetComponent<Line>().set_row_column(row, column);
+                         //obj.GetComponent<ButtonController>().type = "circle";
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(circles_container.transform, true);
                     }
@@ -80,8 +80,8 @@ public class GameController : MonoBehaviour
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
-                        obj.GetComponent<Line>().set_row_column(row, column);
-                        //obj.GetComponent<ButtonController>().type = "h_line";                       
+                        //obj.GetComponent<Line>().set_row_column(row, column);
+                         //obj.GetComponent<ButtonController>().type = "h_line";                       
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 
@@ -97,8 +97,8 @@ public class GameController : MonoBehaviour
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 300);
-                        obj.GetComponent<Line>().set_row_column(row, column);
-                        //obj.GetComponent<ButtonController>().type = "v_line";
+                        //obj.GetComponent<Line>().set_row_column(row, column);
+                         //obj.GetComponent<ButtonController>().type = "v_line";
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 
@@ -108,7 +108,7 @@ public class GameController : MonoBehaviour
                     if ((column + 1) % 2 == 0)
                     {
                         GameObject obj = Instantiate(text, pos, this.transform.rotation, this.transform);
-                        obj.GetComponent<Line>().set_row_column(row, column);
+                        //obj.GetComponent<Line>().set_row_column(row, column);
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(texts_container.transform, true);
                     }
@@ -148,29 +148,75 @@ public class GameController : MonoBehaviour
         panel.sizeDelta = Vector2.zero;
         panel.anchoredPosition = Vector2.zero;
 
+
+        board.FindSquares();
     }
 
-    private void Update()
+    private void CreateBoard()
+    {
+        board.squares = new Square[rows * columns];
+
+        for (int i = 0; i < board.squares.Length; ++i)
+        {
+            board.squares[i] = new Square();
+            board.squares[i].SetIndex(i);
+
+            // Primera fila de rows
+            if (i < rows)
+            {
+                // Primer cuadrado
+                if (i == 0)
+                {
+
+                }
+
+                else
+                {
+
+                }
+            }
+
+            // Primera columna de columns
+            else if (i % rows == 0)
+            {
+
+            }
+
+            // Resto de casillas (ya sin primera fila y primera columna)
+            else
+            {
+
+            }
+        }
+    }
+
+    /*private void Update()
     {
 
-        if (active_player == "Ai")
+        if (board.activePlayer == "Ai")
         {
             ai.play(board);
-            end_turn();
+            End_Turn();
         }
 
-    }
-    public void end_turn()
+    }*/
+
+    public void End_Turn(Line line)
     {
-        board.updateColours(active_player);
-        if (active_player == "Ai")
-        {
-            active_player = "Player";
-        }
-        else
-        {
-            active_player = "Ai";
-        }
+        board.UpdateColours(board.activePlayer, line);
+
+        if (!IsSquare(line))
+            board.Opponent();
     }
 
+    public bool IsSquare(Line line)
+    {
+        foreach(Square square in line.ParentSquares)
+        {
+            if (square.IsClosedSquare())
+                return true;
+        }
+
+        return false;
+    }
 }

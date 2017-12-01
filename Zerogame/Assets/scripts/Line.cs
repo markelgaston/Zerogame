@@ -1,33 +1,55 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Line : MonoBehaviour
 {
+    List<Square> parentSquares = new List<Square>();
 
+    Image image;
 
-    public int row, column;
-
-    public enum State
+    public List<Square> ParentSquares
     {
-        idle,
-        pressed,
-        square
+        get { return parentSquares; }
     }
-    public State state = State.idle;
 
-    public void set_row_column(int row_, int column_)
+    int score;
+
+    public int Score
     {
-        row = row_;
-        column = column_;
+        get { return score; }
+    }
+
+    bool pressed;
+    
+    public bool IsPressed
+    {
+        get{ return pressed; }
+    }
+
+
+    private void Start()
+    {
+        image = GetComponent<Image>();
+    }
+
+    public void AddSquare(Square square)
+    {
+        parentSquares.Add(square);
+    }
+    
+    public void SetColor(Color color)
+    {
+        image.color = color;
     }
 
     public void On_Pressed()
     {
-        if (state == State.idle)
+        if (!pressed)
         {
-            state = State.pressed;
-            GameController.Instance.end_turn();
+            pressed = true;
+            GameController.Instance.End_Turn(this); // Ver si ha cerrado cuadrado
         }
     }
 
