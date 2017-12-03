@@ -9,6 +9,8 @@ public class Line : MonoBehaviour
 
     Image image;
 
+    Vector3 initScale;
+
     public List<Square> ParentSquares
     {
         get { return parentSquares; }
@@ -32,6 +34,7 @@ public class Line : MonoBehaviour
     private void Start()
     {
         image = GetComponent<Image>();
+        initScale = transform.localScale;
     }
 
     public void AddSquare(Square square)
@@ -41,6 +44,10 @@ public class Line : MonoBehaviour
     
     public void SetColor(Color color)
     {
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("Normal");
+        transform.localScale = initScale;
+        animator.enabled = false;
         image.color = color;
     }
 

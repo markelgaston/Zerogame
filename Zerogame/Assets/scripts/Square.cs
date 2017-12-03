@@ -2,12 +2,18 @@
 
 public class Square
 {
-    int squareIndex;
 
     Line[] lines;
 
     bool closedSquare;
 
+    int index;
+
+    public int Index
+    {
+        get { return index; }
+        set { index = value; }
+    }
 
     public Square()
     {
@@ -67,14 +73,8 @@ public class Square
         return lines[index];
     }
 
-    public void SetIndex(int index)
-    {
-        squareIndex = index;
-    }
-
     public bool IsClosedSquare()
     {
-        Debug.Log("A");
         if (closedSquare)
             return true;
 
@@ -83,7 +83,6 @@ public class Square
             int pressedCount = 0;
             for (int i = 0; i < 4; ++i)
             {
-                Debug.Log(lines[i].name);
                 if (lines[i].IsPressed)
                     ++pressedCount;
             }

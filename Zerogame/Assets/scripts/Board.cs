@@ -10,19 +10,39 @@ public class Board
 
     public Square[] squares;
 
+    public List<Text> texts = new List<Text>();
+
     public GameObject[,] boardElements;
 
     public Line[,] lines;
+    
+    public string[] players = { "Player", "Ai"};
 
-    public string activePlayer = "Player";
+    public int activePlayer = 0;
+
+    public Text activePlayerText;
+
+    GameObject turnTexts;
+    GameObject endTexts;
 
     public Board(int _rows, int _columns)
     {
         rows = _rows;
         columns = _columns;
+
+        turnTexts = GameObject.Find("Turn Texts");
+        endTexts = GameObject.Find("End Texts");
+
+        endTexts.SetActive(false);
+    }
+
+    public void InitializePlayerText(Text _text)
+    {
+        activePlayerText = _text;
+        activePlayerText.text = players[0];
     }
     
-    public void UpdateColours(string _active_player, Line move)
+    public void UpdateColours(Line move)
     {
         bool anyClosedSquare = false;
         List<Square> squaresClosed = new List<Square>();
@@ -33,6 +53,7 @@ public class Board
             {
                 anyClosedSquare = true;
                 squaresClosed.Add(square);
+                texts[square.Index].text = players[activePlayer];
             }
         }
 
@@ -69,19 +90,20 @@ public class Board
     }
 
     /// <summary>
-    /// Comprueba si están todas las casillas marcadas
+    /// Devuelve el siguiente jugador al que tocará jugar
     /// </summary>
+    /// <param name="currentPlayer"></param>
     /// <returns></returns>
-    public string Opponent()
+    public int NextPlayer()
     {
-        if (activePlayer == "Ai")
-        {
-            return "Player";
-        }
+        if (activePlayer >= players.Length - 1)
+            activePlayer = 0;
         else
-        {
-            return "Ai";
-        }
+            ++activePlayer;
+
+        activePlayerText.text = players[activePlayer];
+
+        return activePlayer;        
     }
 
     /// <summary>
@@ -103,7 +125,7 @@ public class Board
     /// Devuelve un valor del tablero
     /// </summary>
     /// <returns></returns>
-    public Line Evaluate(string activePlayer)
+    public Line Evaluate(int activePlayer)
     {
         /*
          * O O O
@@ -170,7 +192,7 @@ public class Board
        // newBoard.lines[move.row, move.column].state = Line.State.pressed;
 
         if(!GameController.Instance.IsSquare(move))
-            newBoard.activePlayer = Opponent();
+            newBoard.activePlayer = NextPlayer();
 
         return newBoard;
     }
@@ -185,5 +207,56 @@ public class Board
         newBoard.activePlayer = this.activePlayer;
 
         return newBoard;
+    }
+
+    public void FinishGame()
+    {
+        turnTexts.SetActive(false);
+        
+        RectTransform endTextRectTr = endTexts.GetComponent<RectTransform>();
+
+        Text scoreText = endTextRectTr.GetChild(0).GetComponent<Text>();
+        Text winnerText = endTextRectTr.GetChild(1).GetComponent<Text>();
+        FinalScore(scoreText, winnerText);
+
+        endTexts.SetActive(true);
+    }
+
+    void FinalScore(Text score, Text winner)
+    {
+        string separator = "   -   ";
+        int[] count = new int[players.Length]; // Número de jugadores
+        int bestScore = -1;
+        int bestIndex = -1;
+
+        // Conteo
+        for (int i = 0; i < texts.Count; i++)
+        {
+            for (int j = 0; j < players.Length; j++)
+            {
+                if (texts[i].text.Equals(players[j]))
+                    ++count[j];
+
+                if (count[j] > bestScore)
+                {
+                    bestScore = count[j];
+                    bestIndex = j;
+                }
+            }
+        }
+
+        // Actualizo textos de final de juego
+
+        winner.text = players[bestIndex] + " wins!";
+
+        score.text = "";
+        for (int i = 0; i < count.Length; i++)
+        {
+            score.text += players[i] + ": " + count[i];
+            if (i != count.Length - 1)
+                score.text += separator;
+
+
+        }
     }
 }

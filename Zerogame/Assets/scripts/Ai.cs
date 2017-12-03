@@ -7,7 +7,7 @@ public class Ai
 
     private Board board;
     private Line move;
-    private string activePlayer;
+    private int activePlayer;
     public int MAX_DEPTH;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
