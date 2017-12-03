@@ -20,26 +20,18 @@ public class Board
 
     public int activePlayer = 0;
 
-    public Text activePlayerText;
-
-    GameObject turnTexts;
-    GameObject endTexts;
-
     public Board(int _rows, int _columns)
     {
         rows = _rows;
         columns = _columns;
 
-        turnTexts = GameObject.Find("Turn Texts");
-        endTexts = GameObject.Find("End Texts");
-
-        endTexts.SetActive(false);
+        squares = new Square[rows * columns];
     }
 
     public void InitializePlayerText(Text _text)
     {
-        activePlayerText = _text;
-        activePlayerText.text = players[0];
+        GameController.Instance.activePlayerText = _text;
+        GameController.Instance.activePlayerText.text = players[0];
     }
     
     public void UpdateColours(Line move)
@@ -101,7 +93,7 @@ public class Board
         else
             ++activePlayer;
 
-        activePlayerText.text = players[activePlayer];
+        GameController.Instance.activePlayerText.text = players[activePlayer];
 
         return activePlayer;        
     }
@@ -125,14 +117,14 @@ public class Board
     /// Devuelve un valor del tablero
     /// </summary>
     /// <returns></returns>
-    public Line Evaluate(int activePlayer)
+    public int Evaluate(int activePlayer)
     {
         /*
          * O O O
          * O O O
          * O O O
          * */
-         
+
         // Todas las líneas empiezan con un valor y se va cambiando el valor de las
         // casillas contiguas a la línea pulsada
 
@@ -156,26 +148,52 @@ public class Board
             }
         }*/
 
+        int[] evaluationMatrix = new int [squares.Length];
+        int bestScore = 0;
+        List<int> bestScores = new List<int>();
 
+        for(int i = 0; i < squares.Length; ++i)
+        {
+            int pressedLines = squares[i].GetPressedLines();
+            if(pressedLines != 4) {
 
-        throw new NotImplementedException();
+                if(pressedLines == 0) {
+
+                    bestScore += 7;
+
+                } else if(pressedLines == 1) {
+
+                    bestScore += 5;
+
+                } else if(pressedLines == 3) {
+
+                    bestScore += 10;
+
+                } else {
+
+                    bestScore += -10;
+
+                }
+            }
+        }
+
+        Debug.Log("Evaluate " + bestScore);
+
+        return bestScore;
     }
 
     /// <summary>
     /// Todas los posibles movimientos de un estado del tablero
     /// </summary>
     /// <returns></returns>
-    public List<Line> PossibleMoves()
+    public List<Square> PossibleMoves()
     {
-        List<Line> availableLines = new List<Line>();
+        List<Square> availableLines = new List<Square>();
 
         for (int i = 0; i < squares.Length; i++)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                if (!squares[i].GetLine(j).IsPressed)
-                    availableLines.Add(squares[i].GetLine(j));
-            }
+            if (squares[i].GetPressedLines() < 4)
+                availableLines.Add(squares[i]);                
         }
 
         return availableLines;
@@ -186,12 +204,12 @@ public class Board
     /// </summary>
     /// <param name="move"></param>
     /// <returns></returns>
-    public Board GenerateNewBoardFromMove(Line move)
+    public Board GenerateNewBoardFromMove(Square move)
     {
         Board newBoard = DuplicateBoard();
-       // newBoard.lines[move.row, move.column].state = Line.State.pressed;
+        // newBoard.lines[move.row, move.column].state = Line.State.pressed;
 
-        if(!GameController.Instance.IsSquare(move))
+        if(!move.IsClosedSquare())
             newBoard.activePlayer = NextPlayer();
 
         return newBoard;
@@ -203,23 +221,36 @@ public class Board
         for (int i = 0; i < squares.Length; i++)
         {
             newBoard.squares[i] = this.squares[i];
+
+            /*for(int j = 0; j < 4; j++) {
+                newBoard.squares[i].SetLine(j, this.squares[i].GetLine(j), this.squares[i]);
+            }*/
         }
         newBoard.activePlayer = this.activePlayer;
 
         return newBoard;
     }
 
+    public bool IsSquare(Line line) {
+        foreach(Square square in line.ParentSquares) {
+            if(square.IsClosedSquare())
+                return true;
+        }
+
+        return false;
+    }
+
     public void FinishGame()
     {
-        turnTexts.SetActive(false);
+        GameController.Instance.turnTexts.SetActive(false);
         
-        RectTransform endTextRectTr = endTexts.GetComponent<RectTransform>();
+        RectTransform endTextRectTr = GameController.Instance.endTexts.GetComponent<RectTransform>();
 
         Text scoreText = endTextRectTr.GetChild(0).GetComponent<Text>();
         Text winnerText = endTextRectTr.GetChild(1).GetComponent<Text>();
         FinalScore(scoreText, winnerText);
 
-        endTexts.SetActive(true);
+        GameController.Instance.endTexts.SetActive(true);
     }
 
     void FinalScore(Text score, Text winner)

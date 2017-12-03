@@ -18,9 +18,9 @@ public class Line : MonoBehaviour
 
     int score;
 
-    public int Score
-    {
+    public int Score {
         get { return score; }
+        set { score = value; }
     }
 
     bool pressed;

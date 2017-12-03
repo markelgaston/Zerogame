@@ -29,8 +29,10 @@ public class GameController : MonoBehaviour
 
     float distance = 72; //distance between nodes
 
-    Ai ai;    
+    Ai ai;
 
+    public GameObject turnTexts;
+    public GameObject endTexts;
 
     public static GameController Instance;
 
@@ -40,6 +42,8 @@ public class GameController : MonoBehaviour
             Destroy(this);
         else
             Instance = this;
+        
+        endTexts.SetActive(false);
 
         ai = new Ai();
 
@@ -171,25 +175,32 @@ public class GameController : MonoBehaviour
 
     }*/
 
+    public void AIEnded(ScoringSquare scoringSquare) {
+                
+        Line line = null;
+        for(int i = 0; i < 4; i++) {
+            if (!board.squares[scoringSquare.SquareIndex].GetLine(i).IsPressed) {
+                line = board.squares[scoringSquare.SquareIndex].GetLine(i);
+                break;
+            }
+        }
+
+        End_Turn(line);
+    }
+
     public void End_Turn(Line line)
     {
+        Debug.Log(line.name);
         board.UpdateColours(line);
+
+        if(!board.IsSquare(line))
+            board.NextPlayer();
 
         if (board.IsEndOfGame())
             board.FinishGame();
-
-        if (!IsSquare(line))
-            board.NextPlayer();
+        else if(board.players[board.activePlayer].Contains("Ai")) {
+            ai.play(board);
+        }       
     }
 
-    public bool IsSquare(Line line)
-    {
-        foreach(Square square in line.ParentSquares)
-        {
-            if (square.IsClosedSquare())
-                return true;
-        }
-
-        return false;
-    }
 }

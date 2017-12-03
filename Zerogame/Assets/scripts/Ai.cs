@@ -8,7 +8,7 @@ public class Ai
     private Board board;
     private Line move;
     private int activePlayer;
-    public int MAX_DEPTH;
+    public int MAX_DEPTH = 1;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
@@ -17,13 +17,14 @@ public class Ai
     {
         board = _board;
 
-        Minimax(_board, 0);
+        ScoringSquare ss = Minimax(_board, 0);
+        Move(ss);
         //evaluate_best_play(board.rows,board.columns);
         //move();
     }
-    public void Move(Line move) //Realiza su movimiento
+    public void Move(ScoringSquare move) //Realiza su movimiento
     {
-        GameController.Instance.End_Turn(move);
+        GameController.Instance.AIEnded(move);
     }
 
     public void evaluate_best_play(int rows, int columns) //criterio: coge el primero que encuentra sin presionar
@@ -66,54 +67,57 @@ public class Ai
     }
 
 
-    Line Minimax(Board board, byte depth)
+    ScoringSquare Minimax(Board board, int depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.
-        Line bestMove;
+        int bestMove = 0;
         int bestScore = 0;
-        Line scoringMove = null; // score, movimiento
+        ScoringSquare scoringSquare; // score, movimiento
         Board newBoard;
         // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
-            scoringMove = board.Evaluate(activePlayer);
+            scoringSquare = new ScoringSquare(board.Evaluate(activePlayer), 0);
         }
         else
         {
             if (board.activePlayer == activePlayer) bestScore = MINUS_INFINITE;
             else bestScore = INFINITE;
 
-            List<Line> possibleMoves = new List<Line>();
+            List<Square> possibleMoves = new List<Square>();
             possibleMoves = board.PossibleMoves();
 
-            foreach (Line move in possibleMoves)
+            foreach (Square move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
 
                 // Recursividad
-                scoringMove = Minimax(newBoard, (byte)(depth + 1));
+                scoringSquare = Minimax(newBoard, (depth + 1));
 
                 // Actualizar mejor score
                 if (board.activePlayer == activePlayer)
                 {
-                    if (scoringMove.Score > bestScore)
+                    if (scoringSquare.Score > bestScore)
                     {
-                        bestScore = scoringMove.Score;
-                        bestMove = move;
+                        bestScore = scoringSquare.Score;
+                        bestMove = move.Index;
+                        Debug.Log("mayor");
                     }
                 }
                 else
                 {
-                    if (scoringMove.Score < bestScore)
+                    if (scoringSquare.Score < bestScore)
                     {
-                        bestScore = scoringMove.Score;
-                        bestMove = move;
+                        bestScore = scoringSquare.Score;
+                        bestMove = move.Index;
+                        Debug.Log("menor");
                     }
                 }
             }
-            return scoringMove;
+            scoringSquare = new ScoringSquare(bestScore, bestMove);
         }
-        return scoringMove;
+        return scoringSquare;
+       
     }
     /*
     ScoringMove Negamax(Board board, byte depth)

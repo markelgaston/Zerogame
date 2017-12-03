@@ -14,6 +14,13 @@ public class Square
         get { return index; }
         set { index = value; }
     }
+    
+    int score;
+
+    public int Score {
+        get { return score; }
+        set { score = value; }
+    }
 
     public Square()
     {
@@ -40,7 +47,7 @@ public class Square
         }
     }
 
-    void SetLine(int index, Line newLine, Square parentSquare)
+    public void SetLine(int index, Line newLine, Square parentSquare)
     {
         lines[index] = newLine;
         lines[index].AddSquare(parentSquare);
@@ -101,4 +108,17 @@ public class Square
             l.SetColor(color);
         }
     }
+
+    public int GetPressedLines()
+    {
+        int count = 0;
+        foreach(Line l in lines) 
+        {
+            if(l.IsPressed)
+                ++count;
+        }
+
+        return count;
+    }
+
 }
