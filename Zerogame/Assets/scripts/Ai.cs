@@ -7,7 +7,7 @@ public class Ai
 
     private Board board;
     private Line move;
-    private int activePlayer;
+    private int activePlayer = 0;
     public int MAX_DEPTH = 1;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
@@ -66,6 +66,20 @@ public class Ai
         */
     }
 
+    void ObserveBoard() 
+    {
+        board = new Board(GameController.Instance.rows, GameController.Instance.columns);
+        int rows = GameController.Instance.rows;
+        int columns = GameController.Instance.columns;
+
+        for(int i = 0; i < rows * columns; i++) {
+                //board.squares[i] = spaceText.text; // Setear squares desde board
+        }
+
+        //board.activePlayer = this.activePlayer;
+        //board.zobristKeys = this.zobristKeys;
+        //board.CalculateHashValue();
+    }
 
     ScoringSquare Minimax(Board board, int depth)
     {
