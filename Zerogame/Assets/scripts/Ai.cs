@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class Ai
 {
-
     private Board board;
-    private Line move;
-    private int activePlayer = 0;
-    public int MAX_DEPTH = 1;
+    private int activePlayer;
+    public int MAX_DEPTH = 5;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
 
-    public void play(Board _board)
+    public void Play(Board _board, int actPlayer)
     {
         board = _board;
+        activePlayer = actPlayer;
 
         ScoringSquare ss = Minimax(_board, 0);
         Move(ss);
@@ -25,45 +24,6 @@ public class Ai
     public void Move(ScoringSquare move) //Realiza su movimiento
     {
         GameController.Instance.AIEnded(move);
-    }
-
-    public void evaluate_best_play(int rows, int columns) //criterio: coge el primero que encuentra sin presionar
-    {
-        /*Scoringmove best_play = new Scoringmove();
-
-        for (int row = 0; row < rows; row++)
-        {
-            for (int column = 0; column < columns; column++)
-            {
-                if ((row + 1) % 2 != 0)//si la fila es impar
-                {
-                    if ((column + 1) % 2 == 0)//si la columna es par(horizontal)
-                    {
-                        if (board.boardElements[row,column].GetComponent<Line>().pressed==false)
-                        {
-                            best_play.move.row = row;
-                            best_play.move.column = column;
-                        }
-
-                    }
-                }
-                if ((row + 1) % 2 == 0)//si la fila es par
-                {
-                    if ((column + 1) % 2 != 0)//si la columna es impar (vertical)
-                    {
-                        if (board.boardElements[row, column].GetComponent<Line>().pressed == false)
-                        {
-                            best_play.move.row = row;
-                            best_play.move.column = column;
-                        }
-                    }
-
-                }
-
-            }
-        }
-        scoringmove = best_play;
-        */
     }
 
     void ObserveBoard() 
@@ -107,7 +67,7 @@ public class Ai
 
                 // Recursividad
                 scoringSquare = Minimax(newBoard, (depth + 1));
-
+                
                 // Actualizar mejor score
                 if (board.activePlayer == activePlayer)
                 {

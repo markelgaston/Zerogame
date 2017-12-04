@@ -88,14 +88,15 @@ public class Board
     /// <returns></returns>
     public int NextPlayer()
     {
-        if (activePlayer >= players.Length - 1)
-            activePlayer = 0;
+        int auxActive = activePlayer;
+        if (auxActive >= players.Length - 1)
+            auxActive = 0;
         else
-            ++activePlayer;
+            ++auxActive;
 
-        GameController.Instance.activePlayerText.text = players[activePlayer];
+        GameController.Instance.activePlayerText.text = players[auxActive];
 
-        return activePlayer;        
+        return auxActive;
     }
 
     /// <summary>
@@ -119,38 +120,20 @@ public class Board
     /// <returns></returns>
     public int Evaluate(int activePlayer)
     {
-        /*
-         * O O O
-         * O O O
-         * O O O
-         * */
-
-        // Todas las líneas empiezan con un valor y se va cambiando el valor de las
-        // casillas contiguas a la línea pulsada
-
-        /*if (lines[row, column] != null)
-        {
-            if (row == 0)
-            {
-
-            }
-            else if (row == lines.GetLength(0) - 1)
-            {
-
-            }
-            if (column == 0)
-            {
-
-            }
-            else if (column == lines.GetLength(1) - 1)
-            {
-
-            }
-        }*/
-
         int[] evaluationMatrix = new int [squares.Length];
         int bestScore = 0;
         List<int> bestScores = new List<int>();
+
+        if (IsEndOfGame())
+        {
+            int bestIndex;
+            FinalScore(out bestIndex);
+
+            if (bestIndex == activePlayer)
+                return 200;
+            else
+                return -200;
+        }
 
         for(int i = 0; i < squares.Length; ++i)
         {
@@ -167,17 +150,15 @@ public class Board
 
                 } else if(pressedLines == 3) {
 
-                    bestScore += 10;
+                    bestScore += 20;
 
                 } else {
 
-                    bestScore += -10;
+                    bestScore += -20;
 
                 }
             }
         }
-
-        Debug.Log("Evaluate " + bestScore);
 
         return bestScore;
     }
@@ -248,17 +229,19 @@ public class Board
 
         Text scoreText = endTextRectTr.GetChild(0).GetComponent<Text>();
         Text winnerText = endTextRectTr.GetChild(1).GetComponent<Text>();
-        FinalScore(scoreText, winnerText);
+
+        int bestIndex = 0;
+        int[] count = FinalScore(out bestIndex);
+        FinalText(scoreText, winnerText, count, bestIndex);
 
         GameController.Instance.endTexts.SetActive(true);
     }
 
-    void FinalScore(Text score, Text winner)
+    int[] FinalScore(out int bestIndex)
     {
-        string separator = "   -   ";
         int[] count = new int[players.Length]; // Número de jugadores
         int bestScore = -1;
-        int bestIndex = -1;
+        bestIndex = -1;
 
         // Conteo
         for (int i = 0; i < texts.Count; i++)
@@ -276,8 +259,12 @@ public class Board
             }
         }
 
-        // Actualizo textos de final de juego
+        return count;
+    }
 
+    void FinalText(Text score, Text winner, int[] count, int bestIndex)
+    {
+        string separator = "   -   ";
         winner.text = players[bestIndex] + " wins!";
 
         score.text = "";
@@ -286,8 +273,6 @@ public class Board
             score.text += players[i] + ": " + count[i];
             if (i != count.Length - 1)
                 score.text += separator;
-
-
         }
     }
 }

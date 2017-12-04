@@ -164,28 +164,21 @@ public class GameController : MonoBehaviour
         
     }
 
-    /*private void Update()
-    {
-
-        if (board.activePlayer == "Ai")
-        {
-            ai.play(board);
-            End_Turn();
-        }
-
-    }*/
-
     public void AIEnded(ScoringSquare scoringSquare) {
                 
         Line line = null;
-        for(int i = 0; i < 4; i++) {
-            if (!board.squares[scoringSquare.SquareIndex].GetLine(i).IsPressed) {
+        for(int i = 0; i < 4; i++)
+        {
+            if (!board.squares[scoringSquare.SquareIndex].GetLine(i).IsPressed)
+            {
                 line = board.squares[scoringSquare.SquareIndex].GetLine(i);
                 break;
             }
         }
 
-        End_Turn(line);
+        //board.NextPlayer();
+        //End_Turn(line);
+        line.On_Pressed();
     }
 
     public void End_Turn(Line line)
@@ -194,13 +187,13 @@ public class GameController : MonoBehaviour
         board.UpdateColours(line);
 
         if(!board.IsSquare(line))
-            board.NextPlayer();
+            board.activePlayer = board.NextPlayer();
 
         if (board.IsEndOfGame())
             board.FinishGame();
-        else if(board.players[board.activePlayer].Contains("Ai")) {
-            ai.play(board);
-        }       
+
+        else if(board.players[board.activePlayer].Contains("Ai"))
+            ai.Play(board, board.activePlayer);
     }
 
 }
