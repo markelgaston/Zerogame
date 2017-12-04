@@ -36,7 +36,7 @@ public class Square
         player = "";
     }
 
-    public void SetLine(string direction, Line newLine, Square parentSquare)
+    public void SetLine(string direction, LinePainter newLine, Square parentSquare)
     {
         if (direction.Equals("N"))
         {
@@ -56,9 +56,9 @@ public class Square
         }
     }
 
-    public void SetLine(int index, Line newLine, Square parentSquare)
+    public void SetLine(int index, LinePainter newLine, Square parentSquare)
     {
-        lines[index] = newLine;
+        lines[index] = newLine.Line;
         lines[index].AddSquare(parentSquare);
     }
 
@@ -114,7 +114,7 @@ public class Square
     {
         foreach(Line l in lines)
         {
-            l.SetColor(color);
+            l.LinePainter.SetColor(color);
         }
     }
 

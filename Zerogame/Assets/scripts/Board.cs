@@ -14,7 +14,7 @@ public class Board
 
     public GameObject[,] boardElements;
 
-    public Line[,] lines;
+    public LinePainter[,] lines;
     
     public string[] players = { "Player", "Ai"};
 
@@ -56,7 +56,7 @@ public class Board
                 square.SetClosedColor(Color.gray);
             }
         else
-            move.SetColor(Color.red);
+            move.LinePainter.SetColor(Color.red);
 
     }
 
@@ -78,7 +78,6 @@ public class Board
                     ++squareIndex;
                 }
             }
-
         }
     }
 
@@ -159,14 +158,28 @@ public class Board
                     }
                 //}
             }
-
-            
+                        
             else if (squares[i].Player != "")
                 bestScore -= 1;
         }
         Debug.Log(bestScore);
 
         return bestScore;
+    }
+
+    public Line ChooseLine(int squareIndex)
+    {
+        Line line = null;
+        for (int i = 0; i < 4; i++)
+        {
+            if (!squares[squareIndex].GetLine(i).IsPressed)
+            {
+                line = squares[squareIndex].GetLine(i);
+                break;
+            }
+        }
+
+        return line;
     }
 
     /// <summary>
@@ -193,10 +206,13 @@ public class Board
     /// <returns></returns>
     public Board GenerateNewBoardFromMove(Square move)
     {
-        Board newBoard = DuplicateBoard();
+        Board newBoard = this.DuplicateBoard();
         // newBoard.lines[move.row, move.column].state = Line.State.pressed;
 
-        if(!move.IsClosedSquare())
+        Line line = newBoard.ChooseLine(move.Index);
+        line.IsPressed = true;
+        
+        if (!move.IsClosedSquare())
             newBoard.activePlayer = NextPlayer();
 
         return newBoard;
