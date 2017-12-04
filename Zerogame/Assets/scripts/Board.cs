@@ -192,10 +192,7 @@ public class Board
     public Board GenerateNewBoardFromMove(Square move)
     {
         Board newBoard = this.DuplicateBoard();
-        // newBoard.lines[move.row, move.column].state = Line.State.pressed;
         
-        //line.IsPressed = true;
-
         Line line = newBoard.ChooseLine(move.Index);
         
         if (!move.IsClosedSquare())
@@ -209,11 +206,13 @@ public class Board
         Board newBoard = new Board(rows, columns);
         for (int i = 0; i < squares.Length; i++)
         {
-            newBoard.squares[i] = this.squares[i];
+            newBoard.squares[i] = new Square();
+            //newBoard.squares[i].Index = this.squares[i].Index;
 
-            /*for(int j = 0; j < 4; j++) {
-                newBoard.squares[i].SetLine(j, this.squares[i].GetLine(j), this.squares[i]);
-            }*/
+            for(int j = 0; j < 4; j++)
+            {
+                newBoard.squares[i].SetPressed(j, squares[i].GetPressed(j));
+            }
         }
         newBoard.activePlayer = this.activePlayer;
 
@@ -275,9 +274,10 @@ public class Board
         Line line = null;
         for (int i = 0; i < 4; i++)
         {
-            if (!squares[index].GetLine(i).IsPressed)
+            if (!squares[index].GetPressed(i))
             {
                 line = squares[index].GetLine(i);
+                squares[index].SetPressed(i, true);
                 break;
             }
         }

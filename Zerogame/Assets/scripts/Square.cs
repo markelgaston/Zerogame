@@ -15,13 +15,6 @@ public class Square
         set { index = value; }
     }
     
-    int score;
-
-    public int Score {
-        get { return score; }
-        set { score = value; }
-    }
-
     string player;
 
     public string Player
@@ -111,7 +104,7 @@ public class Square
             int pressedCount = 0;
             for (int i = 0; i < 4; ++i)
             {
-                if (lines[i].IsPressed)
+                if (GetPressed(i))
                     ++pressedCount;
             }
 
@@ -133,9 +126,9 @@ public class Square
     public int GetPressedLines()
     {
         int count = 0;
-        foreach(Line l in lines) 
+        foreach(bool pressed in pressedLines) 
         {
-            if(l.IsPressed)
+            if(pressed)
                 ++count;
         }
 
