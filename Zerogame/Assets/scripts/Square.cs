@@ -3,7 +3,8 @@
 public class Square
 {
     Line[] lines;
-
+    bool[] pressedLines;
+    
     bool closedSquare;
 
     int index;
@@ -33,10 +34,25 @@ public class Square
     public Square()
     {
         lines = new Line[4];
+        pressedLines = new bool[4];
         player = "";
     }
 
+<<<<<<< HEAD
     public void SetLine(string direction, LinePainter newLine, Square parentSquare)
+=======
+    public bool GetPressed(int index)
+    {
+        return pressedLines[index];
+    }
+
+    public void SetPressed(int index, bool value)
+    {
+        pressedLines[index] = value;
+    }
+
+    public void SetLine(string direction, Line newLine, Square parentSquare)
+>>>>>>> master
     {
         if (direction.Equals("N"))
         {

@@ -64,7 +64,11 @@ public class GameController : MonoBehaviour
 
         CreateBoard();
 
+<<<<<<< HEAD
         board.lines = new LinePainter[rows * 2 + 1, columns + 1];
+=======
+        board.lines = new Line[rows * 2 + 1, columns + 1];
+>>>>>>> master
 
         //Instantiate square/circle
         for (int row = 0; row < realRows; row++)
@@ -87,7 +91,11 @@ public class GameController : MonoBehaviour
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 
+<<<<<<< HEAD
                         board.lines[s_rows, s_columns] = obj.GetComponent<LinePainter>();
+=======
+                        board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
+>>>>>>> master
                         s_columns++;
                     }
                 }
@@ -102,7 +110,11 @@ public class GameController : MonoBehaviour
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
 
+<<<<<<< HEAD
                         board.lines[s_rows, s_columns] = obj.GetComponent<LinePainter>();
+=======
+                        board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
+>>>>>>> master
                         s_columns++;
                     }
                     if ((column + 1) % 2 == 0)
@@ -164,8 +176,13 @@ public class GameController : MonoBehaviour
         
     }
 
+<<<<<<< HEAD
     public void AIEnded(ScoringSquare scoringSquare) {
 
+=======
+    public void AIEnded(ScoringSquare scoringSquare)
+    {
+>>>>>>> master
         Line line = board.ChooseLine(scoringSquare.SquareIndex);
         
         //End_Turn(line);
