@@ -3,18 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-<<<<<<< HEAD
-public class Line
-{
-    LinePainter linePainter;
-
-    public LinePainter LinePainter
-    {
-        get { return linePainter; }
-    }
-
-    List<Square> parentSquares;
-=======
 public class Line : MonoBehaviour
 {
     List<Square> parentSquares = new List<Square>();
@@ -22,47 +10,24 @@ public class Line : MonoBehaviour
     Image image;
 
     Vector3 initScale;
->>>>>>> master
 
     public List<Square> ParentSquares
     {
         get { return parentSquares; }
     }
 
-<<<<<<< HEAD
-=======
-    int score;
-
-    public int Score {
-        get { return score; }
-        set { score = value; }
-    }
-
->>>>>>> master
     bool pressed;
     
     public bool IsPressed
     {
-<<<<<<< HEAD
         get { return pressed; }
         set { pressed = value; }
     }
-
-    public Line(LinePainter _linePainter)
-    {
-        linePainter = _linePainter;
-        parentSquares = new List<Square>();
-=======
-        //get { return pressed; }
-        set { pressed = value; }
-    }
-
-
+    
     private void Start()
     {
         image = GetComponent<Image>();
         initScale = transform.localScale;
->>>>>>> master
     }
 
     public void AddSquare(Square square)
@@ -70,8 +35,6 @@ public class Line : MonoBehaviour
         parentSquares.Add(square);
     }
     
-<<<<<<< HEAD
-=======
     public void SetColor(Color color)
     {
         Animator animator = GetComponent<Animator>();
@@ -80,8 +43,7 @@ public class Line : MonoBehaviour
         animator.enabled = false;
         image.color = color;
     }
-
->>>>>>> master
+    
     public void On_Pressed()
     {
         if (!pressed)

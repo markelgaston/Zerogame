@@ -14,7 +14,7 @@ public class Board
 
     public GameObject[,] boardElements;
 
-    public LinePainter[,] lines;
+    public Line[,] lines;
     
     public string[] players = { "Player", "Ai"};
 
@@ -56,7 +56,7 @@ public class Board
                 square.SetClosedColor(Color.gray);
             }
         else
-            move.LinePainter.SetColor(Color.red);
+            move.SetColor(Color.red);
 
     }
 
@@ -167,21 +167,6 @@ public class Board
         return bestScore;
     }
 
-    public Line ChooseLine(int squareIndex)
-    {
-        Line line = null;
-        for (int i = 0; i < 4; i++)
-        {
-            if (!squares[squareIndex].GetLine(i).IsPressed)
-            {
-                line = squares[squareIndex].GetLine(i);
-                break;
-            }
-        }
-
-        return line;
-    }
-
     /// <summary>
     /// Todas los posibles movimientos de un estado del tablero
     /// </summary>
@@ -209,7 +194,6 @@ public class Board
         Board newBoard = this.DuplicateBoard();
         // newBoard.lines[move.row, move.column].state = Line.State.pressed;
         
-        Line line = ChooseLine(move.Index);
         //line.IsPressed = true;
 
         Line line = newBoard.ChooseLine(move.Index);
@@ -298,7 +282,6 @@ public class Board
                 break;
             }
         }
-
         
         line.IsPressed = true;
         return line;

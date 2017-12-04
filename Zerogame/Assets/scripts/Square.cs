@@ -37,10 +37,7 @@ public class Square
         pressedLines = new bool[4];
         player = "";
     }
-
-<<<<<<< HEAD
-    public void SetLine(string direction, LinePainter newLine, Square parentSquare)
-=======
+    
     public bool GetPressed(int index)
     {
         return pressedLines[index];
@@ -52,7 +49,6 @@ public class Square
     }
 
     public void SetLine(string direction, Line newLine, Square parentSquare)
->>>>>>> master
     {
         if (direction.Equals("N"))
         {
@@ -72,9 +68,9 @@ public class Square
         }
     }
 
-    public void SetLine(int index, LinePainter newLine, Square parentSquare)
+    public void SetLine(int index, Line newLine, Square parentSquare)
     {
-        lines[index] = newLine.Line;
+        lines[index] = newLine;
         lines[index].AddSquare(parentSquare);
     }
 
@@ -130,7 +126,7 @@ public class Square
     {
         foreach(Line l in lines)
         {
-            l.LinePainter.SetColor(color);
+            l.SetColor(color);
         }
     }
 
