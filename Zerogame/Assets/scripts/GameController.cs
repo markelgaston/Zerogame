@@ -164,17 +164,9 @@ public class GameController : MonoBehaviour
         
     }
 
-    public void AIEnded(ScoringSquare scoringSquare) {
-                
-        Line line = null;
-        for(int i = 0; i < 4; i++)
-        {
-            if (!board.squares[scoringSquare.SquareIndex].GetLine(i).IsPressed)
-            {
-                line = board.squares[scoringSquare.SquareIndex].GetLine(i);
-                break;
-            }
-        }
+    public void AIEnded(ScoringSquare scoringSquare)
+    {
+        Line line = board.ChooseLine(scoringSquare.SquareIndex);
         
         //End_Turn(line);
         line.On_Pressed();

@@ -193,8 +193,11 @@ public class Board
     /// <returns></returns>
     public Board GenerateNewBoardFromMove(Square move)
     {
-        Board newBoard = DuplicateBoard();
+        Board newBoard = this.DuplicateBoard();
         // newBoard.lines[move.row, move.column].state = Line.State.pressed;
+        
+        Line line = ChooseLine(move.Index);
+        //line.IsPressed = true;
 
         if(!move.IsClosedSquare())
             newBoard.activePlayer = NextPlayer();
@@ -266,6 +269,23 @@ public class Board
         }
 
         return count;
+    }
+
+    public Line ChooseLine(int index)
+    {
+        Line line = null;
+        for (int i = 0; i < 4; i++)
+        {
+            if (!squares[index].GetLine(i).IsPressed)
+            {
+                line = squares[index].GetLine(i);
+                break;
+            }
+        }
+
+        
+        line.IsPressed = true;
+        return line;
     }
 
     void FinalText(Text score, Text winner, int[] count, int bestIndex)

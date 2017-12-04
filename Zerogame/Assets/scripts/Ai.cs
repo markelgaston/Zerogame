@@ -78,6 +78,7 @@ public class Ai
         return scoringSquare;
        
     }
+
     /*
     ScoringMove Negamax(Board board, byte depth)
     {
