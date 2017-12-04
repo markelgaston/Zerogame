@@ -197,7 +197,6 @@ public class Board
         //line.IsPressed = true;
 
         Line line = newBoard.ChooseLine(move.Index);
-        line.IsPressed = true;
         
         if (!move.IsClosedSquare())
             newBoard.activePlayer = NextPlayer();
@@ -282,8 +281,7 @@ public class Board
                 break;
             }
         }
-        
-        line.IsPressed = true;
+
         return line;
     }
 

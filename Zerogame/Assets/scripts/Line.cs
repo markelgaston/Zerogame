@@ -21,7 +21,6 @@ public class Line : MonoBehaviour
     public bool IsPressed
     {
         get { return pressed; }
-        set { pressed = value; }
     }
     
     private void Start()
