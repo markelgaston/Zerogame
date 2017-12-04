@@ -34,6 +34,8 @@ public class GameController : MonoBehaviour
     public GameObject turnTexts;
     public GameObject endTexts;
 
+    public Sprite[] circleSprites;
+
     public static GameController Instance;
 
     private void Awake()
@@ -75,6 +77,7 @@ public class GameController : MonoBehaviour
                     if ((column + 1) % 2 != 0)
                     {
                         GameObject obj = Instantiate(circle, pos, this.transform.rotation, this.transform);
+                        obj.GetComponent<Image>().sprite = circleSprites[UnityEngine.Random.Range(0, 5)];
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(circles_container.transform, true);
                     }
@@ -82,7 +85,7 @@ public class GameController : MonoBehaviour
                     {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
-                        obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);                  
+                        obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
                         board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
@@ -96,7 +99,8 @@ public class GameController : MonoBehaviour
                     {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
-                        obj.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 300);
+                        obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
+                        obj.GetComponent<RectTransform>().localRotation = new Quaternion(0, 0, 90, 90);
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
                         board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
