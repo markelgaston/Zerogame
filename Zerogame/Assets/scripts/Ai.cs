@@ -6,7 +6,7 @@ public class Ai
 {
     private Board board;
     private int activePlayer;
-    public int MAX_DEPTH = 5;
+    public int MAX_DEPTH = 4;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
@@ -18,27 +18,14 @@ public class Ai
 
         ScoringSquare ss = Minimax(_board, 0);
         Move(ss);
-        //evaluate_best_play(board.rows,board.columns);
-        //move();
+
+        //NegaMax, etc
+        
     }
+
     public void Move(ScoringSquare move) //Realiza su movimiento
     {
         GameController.Instance.AIEnded(move);
-    }
-
-    void ObserveBoard() 
-    {
-        board = new Board(GameController.Instance.rows, GameController.Instance.columns);
-        int rows = GameController.Instance.rows;
-        int columns = GameController.Instance.columns;
-
-        for(int i = 0; i < rows * columns; i++) {
-                //board.squares[i] = spaceText.text; // Setear squares desde board
-        }
-
-        //board.activePlayer = this.activePlayer;
-        //board.zobristKeys = this.zobristKeys;
-        //board.CalculateHashValue();
     }
 
     ScoringSquare Minimax(Board board, int depth)
@@ -75,7 +62,6 @@ public class Ai
                     {
                         bestScore = scoringSquare.Score;
                         bestMove = move.Index;
-                        Debug.Log("mayor");
                     }
                 }
                 else
@@ -84,7 +70,6 @@ public class Ai
                     {
                         bestScore = scoringSquare.Score;
                         bestMove = move.Index;
-                        Debug.Log("menor");
                     }
                 }
             }

@@ -2,7 +2,6 @@
 
 public class Square
 {
-
     Line[] lines;
 
     bool closedSquare;
@@ -22,9 +21,19 @@ public class Square
         set { score = value; }
     }
 
+    string player;
+
+    public string Player
+    {
+        get { return player; }
+        set { player = value; }
+    }
+
+
     public Square()
     {
         lines = new Line[4];
+        player = "";
     }
 
     public void SetLine(string direction, Line newLine, Square parentSquare)

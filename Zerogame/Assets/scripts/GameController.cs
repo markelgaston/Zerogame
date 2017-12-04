@@ -175,15 +175,13 @@ public class GameController : MonoBehaviour
                 break;
             }
         }
-
-        //board.NextPlayer();
+        
         //End_Turn(line);
         line.On_Pressed();
     }
 
     public void End_Turn(Line line)
     {
-        Debug.Log(line.name);
         board.UpdateColours(line);
 
         if(!board.IsSquare(line))

@@ -46,6 +46,7 @@ public class Board
                 anyClosedSquare = true;
                 squaresClosed.Add(square);
                 texts[square.Index].text = players[activePlayer];
+                square.Player = players[activePlayer];
             }
         }
 
@@ -138,27 +139,32 @@ public class Board
         for(int i = 0; i < squares.Length; ++i)
         {
             int pressedLines = squares[i].GetPressedLines();
-            if(pressedLines != 4) {
 
-                if(pressedLines == 0) {
+            if(pressedLines != 4)
+            {
+                //if (squares[i].Player == players[activePlayer])
+                //{
+                    bestScore += 1;
+                    if (pressedLines == 0) {
+                        bestScore += 2;
 
-                    bestScore += 7;
+                    } else if(pressedLines == 1) {
+                        bestScore += 1;
 
-                } else if(pressedLines == 1) {
+                    } else if(pressedLines == 3) {
+                        bestScore += 40;
 
-                    bestScore += 5;
-
-                } else if(pressedLines == 3) {
-
-                    bestScore += 20;
-
-                } else {
-
-                    bestScore += -20;
-
-                }
+                    } else {
+                        bestScore += -40;
+                    }
+                //}
             }
+
+            
+            else if (squares[i].Player != "")
+                bestScore -= 1;
         }
+        Debug.Log(bestScore);
 
         return bestScore;
     }
