@@ -130,39 +130,45 @@ public class Board
             FinalScore(out bestIndex);
 
             if (bestIndex == activePlayer)
-                return 200;
+                return 500;
             else
-                return -200;
+                return -500;
         }
 
         for(int i = 0; i < squares.Length; ++i)
         {
             int pressedLines = squares[i].GetPressedLines();
 
-            if(pressedLines != 4)
+            if (pressedLines != 4)
             {
-                //if (squares[i].Player == players[activePlayer])
-                //{
+                if (pressedLines == 0)
+                {
+                    bestScore += 2;
+
+                }
+                else if (pressedLines == 1)
+                {
                     bestScore += 1;
-                    if (pressedLines == 0) {
-                        bestScore += 2;
 
-                    } else if(pressedLines == 1) {
-                        bestScore += 1;
+                }
+                else if (pressedLines == 3)
+                {
+                    bestScore += 5;
 
-                    } else if(pressedLines == 3) {
-                        bestScore += 40;
-
-                    } else {
-                        bestScore += -40;
-                    }
-                //}
+                }
+                else
+                {
+                    bestScore += -5;
+                }
             }
-                        
-            else if (squares[i].Player != "")
-                bestScore -= 1;
+
+            else if (squares[i].Player == players[activePlayer])
+                bestScore += 20;
+
+            else bestScore -= 20;
         }
-        Debug.Log(bestScore);
+
+        //Debug.Log(bestScore);
 
         return bestScore;
     }
@@ -173,15 +179,15 @@ public class Board
     /// <returns></returns>
     public List<Square> PossibleMoves()
     {
-        List<Square> availableLines = new List<Square>();
+        List<Square> availableSquares = new List<Square>();
 
         for (int i = 0; i < squares.Length; i++)
         {
             if (squares[i].GetPressedLines() < 4)
-                availableLines.Add(squares[i]);                
+                availableSquares.Add(squares[i]);                
         }
 
-        return availableLines;
+        return availableSquares;
     }
 
     /// <summary>

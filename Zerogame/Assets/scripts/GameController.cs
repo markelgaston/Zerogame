@@ -175,6 +175,11 @@ public class GameController : MonoBehaviour
 
     public void End_Turn(Line line)
     {
+        for(int i = 0; i < line.ParentSquares.Count; ++i)
+        {
+            line.ParentSquares[i].SetPressed(line.IndicesInParent[i], true);
+        }
+
         board.UpdateColours(line);
 
         if(!board.IsSquare(line))

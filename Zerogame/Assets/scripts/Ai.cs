@@ -6,13 +6,14 @@ public class Ai
 {
     private Board board;
     private int activePlayer;
-    public int MAX_DEPTH = 4;
+    public int MAX_DEPTH = 6;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
 
     public void Play(Board _board, int actPlayer)
     {
+        Debug.Log(_board.players[actPlayer]);
         board = _board;
         activePlayer = actPlayer;
 

@@ -5,17 +5,23 @@ using UnityEngine.UI;
 
 public class Line : MonoBehaviour
 {
-    List<Square> parentSquares = new List<Square>();
-
     Image image;
 
     Vector3 initScale;
+
+    List<Square> parentSquares = new List<Square>();
+    List<int> indicesInParent = new List<int>();
 
     public List<Square> ParentSquares
     {
         get { return parentSquares; }
     }
 
+    public List<int> IndicesInParent
+    {
+        get { return indicesInParent; }
+    }
+    
     bool pressed;
     
     public bool IsPressed
@@ -29,9 +35,10 @@ public class Line : MonoBehaviour
         initScale = transform.localScale;
     }
 
-    public void AddSquare(Square square)
+    public void AddSquare(Square square, int index)
     {
         parentSquares.Add(square);
+        indicesInParent.Add(index);
     }
     
     public void SetColor(Color color)

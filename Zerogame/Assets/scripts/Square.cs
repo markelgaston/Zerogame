@@ -64,7 +64,7 @@ public class Square
     public void SetLine(int index, Line newLine, Square parentSquare)
     {
         lines[index] = newLine;
-        lines[index].AddSquare(parentSquare);
+        lines[index].AddSquare(parentSquare, index);
     }
 
     public Line GetLine(string direction)
