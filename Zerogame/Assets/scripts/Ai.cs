@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Ai : MonoBehaviour
 {
     private int activePlayer;
-    public int MAX_DEPTH = 6;
+    public int MAX_DEPTH = 3;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
@@ -17,9 +17,11 @@ public class Ai : MonoBehaviour
     private int MAX_ITERATIONS = 10;
     private int maximumExploredDepth = 0;
 
-    public Text moveText, scoreText, timeText;
+    public Text[] moveText, scoreText, timeText;
 
     private System.Random rng = new System.Random();
+
+    public Toggle[] toggle;
 
     public void Shuffle<T>(IList<T> list)
     {
@@ -38,37 +40,42 @@ public class Ai : MonoBehaviour
     {
         activePlayer = actPlayer;
         ScoringSquare move;
-
         DateTime DateBefore;
         DateTime DateAfter;
 
-        DateBefore = DateTime.Now;
-        move = move = Minimax(_board, 0);
-        DateAfter = DateTime.Now;
-        moveText.text = "" + move.SquareIndex;
-        scoreText.text = "" + move.Score;
-        timeText.text = "" + (DateAfter - DateBefore).TotalSeconds;
-
-        DateBefore = DateTime.Now;
-        move = Negamax(_board, 0);
-        DateAfter = DateTime.Now;
-        moveText.text += "\n\n" + move.SquareIndex;
-        scoreText.text += "\n\n" + move.Score;
-        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
+        if (toggle[0].isOn==true) {
+            DateBefore = DateTime.Now;
+            move = move = Minimax(_board, 0);
+            DateAfter = DateTime.Now;
+            moveText[0].text = "" + move.SquareIndex;
+            scoreText[0].text = "" + move.Score;
+            timeText[0].text = "" + (DateAfter - DateBefore).TotalSeconds;
+        }
+        if (toggle[1].isOn == true)
+        {
+            DateBefore = DateTime.Now;
+            move = Negamax(_board, 0);
+            DateAfter = DateTime.Now;
+            moveText[1].text = "" + move.SquareIndex;
+            scoreText[1].text = "" + move.Score;
+            timeText[1].text = "" + (DateAfter - DateBefore).TotalSeconds;
+        }
+        if (toggle[2].isOn == true)
+        {
+            DateBefore = DateTime.Now;
+            move = NegamaxAB(_board, 0, MINUS_INFINITE, INFINITE);
+            DateAfter = DateTime.Now;
+            moveText[2].text = "" + move.SquareIndex;
+            scoreText[2].text = "" + move.Score;
+            timeText[2].text = "" + (DateAfter - DateBefore).TotalSeconds;
+        }
 
         DateBefore = DateTime.Now;
         move = AspirationSearch(_board);
         DateAfter = DateTime.Now;
-        moveText.text += "\n\n" + move.SquareIndex;
-        scoreText.text += "\n\n" + move.Score;
-        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
-
-        DateBefore = DateTime.Now;
-        move = NegamaxAB(_board, 0, MINUS_INFINITE, INFINITE);
-        DateAfter = DateTime.Now;
-        moveText.text += "\n\n" + move.SquareIndex;
-        scoreText.text += "\n\n" + move.Score;
-        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
+        moveText[3].text = "" + move.SquareIndex;
+        scoreText[3].text = "" + move.Score;
+        timeText[3].text = "" + (DateAfter - DateBefore).TotalSeconds;
 
 
         Move(move);
