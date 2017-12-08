@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ai
+public class Ai : MonoBehaviour
 {
     private int activePlayer;
     public int MAX_DEPTH = 6;
@@ -17,6 +16,21 @@ public class Ai
     private int MAX_ITERATIONS = 10;
     private int maximumExploredDepth = 0;
 
+
+    private System.Random rng = new System.Random();
+
+    public void Shuffle<T>(IList<T> list)
+    {
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+    }
 
     public void Play(Board _board, int actPlayer)
     {
@@ -58,6 +72,7 @@ public class Ai
 
             List<Square> possibleMoves = new List<Square>();
             possibleMoves = board.PossibleMoves();
+            Shuffle(possibleMoves);
 
             foreach (Square move in possibleMoves)
             {
@@ -162,6 +177,7 @@ public class Ai
 
             List<Square> possibleMoves = new List<Square>();
             possibleMoves = board.PossibleMoves();
+            Shuffle(possibleMoves);
 
             foreach (Square move in possibleMoves)
             {
