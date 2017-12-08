@@ -39,10 +39,12 @@ public class Ai : MonoBehaviour
         activePlayer = actPlayer;
         ScoringSquare move;
 
+        DateTime DateBefore;
+        DateTime DateAfter;
 
-        DateTime DateBefore = DateTime.Now;
+        DateBefore = DateTime.Now;
         move = move = Minimax(_board, 0);
-        DateTime DateAfter = DateTime.Now;
+        DateAfter = DateTime.Now;
         moveText.text = "" + move.SquareIndex;
         scoreText.text = "" + move.Score;
         timeText.text = "" + (DateAfter - DateBefore).TotalSeconds;
