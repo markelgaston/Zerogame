@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ai : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Ai : MonoBehaviour
     private int MAX_ITERATIONS = 10;
     private int maximumExploredDepth = 0;
 
+    public Text moveText, scoreText, timeText;
 
     private System.Random rng = new System.Random();
 
@@ -36,14 +38,36 @@ public class Ai : MonoBehaviour
     {
         activePlayer = actPlayer;
         ScoringSquare move;
-        
-        //move = Minimax(_board, 0);
 
-        //move = Negamax(_board, 0);
 
-        //move = NegamaxAB(_board, 0, MINUS_INFINITE, INFINITE);
+        DateTime DateBefore = DateTime.Now;
+        move = move = Minimax(_board, 0);
+        DateTime DateAfter = DateTime.Now;
+        moveText.text = "" + move.SquareIndex;
+        scoreText.text = "" + move.Score;
+        timeText.text = "" + (DateAfter - DateBefore).TotalSeconds;
 
+        DateBefore = DateTime.Now;
+        move = Negamax(_board, 0);
+        DateAfter = DateTime.Now;
+        moveText.text += "\n\n" + move.SquareIndex;
+        scoreText.text += "\n\n" + move.Score;
+        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
+
+        DateBefore = DateTime.Now;
         move = AspirationSearch(_board);
+        DateAfter = DateTime.Now;
+        moveText.text += "\n\n" + move.SquareIndex;
+        scoreText.text += "\n\n" + move.Score;
+        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
+
+        DateBefore = DateTime.Now;
+        move = NegamaxAB(_board, 0, MINUS_INFINITE, INFINITE);
+        DateAfter = DateTime.Now;
+        moveText.text += "\n\n" + move.SquareIndex;
+        scoreText.text += "\n\n" + move.Score;
+        timeText.text += "\n\n" + (DateAfter - DateBefore).TotalSeconds;
+
 
         Move(move);
     }

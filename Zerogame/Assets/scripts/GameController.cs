@@ -30,12 +30,14 @@ public class GameController : MonoBehaviour
 
     float distance = 72; //distance between nodes
 
-    Ai ai;
+    public Ai ai;
 
     public GameObject turnTexts;
     public GameObject endTexts;
 
     public Sprite[] circleSprites;
+
+    public GameObject controlPanel;
 
     public static GameController Instance;
 
@@ -48,7 +50,7 @@ public class GameController : MonoBehaviour
         
         endTexts.SetActive(false);
 
-        ai = new Ai();
+        //ai = new Ai();
 
         realRows = rows * 2 + 1;
         realColumns = columns * 2 + 1;
@@ -198,6 +200,15 @@ public class GameController : MonoBehaviour
 
         else if(board.players[board.activePlayer].Contains("Ai"))
             ai.Play(board, board.activePlayer);
+    }
+
+    public void ShowControl() {
+
+        if(controlPanel.activeInHierarchy)
+            controlPanel.SetActive(false);
+        else
+            controlPanel.SetActive(true);
+
     }
 
     public void RestartGame() {
