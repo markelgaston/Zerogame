@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -197,6 +198,12 @@ public class GameController : MonoBehaviour
 
         else if(board.players[board.activePlayer].Contains("Ai"))
             ai.Play(board, board.activePlayer);
+    }
+
+    public void RestartGame() {
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
     }
 
 }

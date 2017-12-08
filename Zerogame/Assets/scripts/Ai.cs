@@ -13,9 +13,9 @@ public class Ai
     private int previousScore = MINUS_INFINITE;
     private int windowRange = 5;
 
-    private int globalGuess = INFINITE;
-    private int MAX_ITERATIONS = 10;
-    private int maximumExploredDepth = 0;
+    //private int globalGuess = INFINITE;
+    //private int MAX_ITERATIONS = 10;
+    //private int maximumExploredDepth = 0;
 
 
     public void Play(Board _board, int actPlayer)
