@@ -16,7 +16,7 @@ public class Board
 
     public Line[,] lines;
     
-    public string[] players = { "Player", "Ai", "Player 2"};
+    public string[] players = { "Jugador", "Ai"};
 
     public int activePlayer = 0;
 
