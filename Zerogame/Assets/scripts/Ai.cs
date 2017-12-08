@@ -1,27 +1,37 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Ai
 {
-    private Board board;
     private int activePlayer;
     public int MAX_DEPTH = 6;
     public const int MINUS_INFINITE = -99999;
     public const int INFINITE = 99999;
 
+    private int previousScore = MINUS_INFINITE;
+    private int windowRange = 5;
+
+    private int globalGuess = INFINITE;
+    private int MAX_ITERATIONS = 10;
+    private int maximumExploredDepth = 0;
+
 
     public void Play(Board _board, int actPlayer)
     {
-        Debug.Log(_board.players[actPlayer]);
-        board = _board;
         activePlayer = actPlayer;
-
-        ScoringSquare ss = Minimax(_board, 0);
-        Move(ss);
-
-        //NegaMax, etc
+        ScoringSquare move;
         
+        //move = Minimax(_board, 0);
+
+        //move = Negamax(_board, 0);
+
+        //move = NegamaxAB(_board, 0, MINUS_INFINITE, INFINITE);
+
+        move = AspirationSearch(_board);
+
+        Move(move);
     }
 
     public void Move(ScoringSquare move) //Realiza su movimiento
@@ -80,111 +90,109 @@ public class Ai
        
     }
 
-    /*
-    ScoringMove Negamax(Board board, byte depth)
+    ScoringSquare Negamax(Board board, byte depth)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.
         int bestMove = 0;
         int bestScore = 0;
-        ScoringMove scoringMove; // score, movimiento
+        ScoringSquare scoringSquare; // score, movimiento
         Board newBoard;
         // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
             if (depth % 2 == 0)
             {
-                scoringMove = new ScoringMove(board.Evaluate(activePlayer), 0);
+                scoringSquare = new ScoringSquare(board.Evaluate(activePlayer), 0);
             }
             else
             {
-                scoringMove = new ScoringMove(-board.Evaluate(activePlayer), 0);
+                scoringSquare = new ScoringSquare(-board.Evaluate(activePlayer), 0);
             }
         }
         else
         {
             bestScore = MINUS_INFINITE;
 
-            int[] possibleMoves;
+            List<Square> possibleMoves = new List<Square>();
             possibleMoves = board.PossibleMoves();
 
-            foreach (int move in possibleMoves)
+            foreach (Square move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
 
                 // Recursividad
-                scoringMove = Negamax(newBoard, (byte)(depth + 1));
+                scoringSquare = Negamax(newBoard, (byte)(depth + 1));
 
-                int invertedScore = -scoringMove.score;
+                int invertedScore = -scoringSquare.Score;
 
                 // Actualizar mejor score
                 if (invertedScore > bestScore)
                 {
                     bestScore = invertedScore;
-                    bestMove = move;
+                    bestMove = move.Index;
                 }
             }
-            scoringMove = new ScoringMove(bestScore, bestMove);
+            scoringSquare = new ScoringSquare(bestScore, bestMove);
         }
-        return scoringMove;
+        return scoringSquare;
     }
 
-    ScoringMove NegamaxAB(Board board, byte depth, int alfa, int beta)
+    ScoringSquare NegamaxAB(Board board, byte depth, int alfa, int beta)
     {
         // Devuelve el score del tablero y la jugada con la que se llega a él.
         int bestMove = 0;
         int bestScore = 0;
-
-        ScoringMove scoringMove; // score, movimiento
+        ScoringSquare scoringSquare; // score, movimiento
         Board newBoard;
         // Comprobar si hemos terminado de hacer recursión
         if (board.IsEndOfGame() || depth == MAX_DEPTH)
         {
             if (depth % 2 == 0)
             {
-                scoringMove = new ScoringMove(board.Evaluate(activePlayer), 0);
+                scoringSquare = new ScoringSquare(board.Evaluate(activePlayer), 0);
             }
             else
             {
-                scoringMove = new ScoringMove(-board.Evaluate(activePlayer), 0);
+                scoringSquare = new ScoringSquare(-board.Evaluate(activePlayer), 0);
             }
         }
         else
         {
             bestScore = MINUS_INFINITE;
 
-            int[] possibleMoves;
+            List<Square> possibleMoves = new List<Square>();
             possibleMoves = board.PossibleMoves();
 
-            foreach (int move in possibleMoves)
+            foreach (Square move in possibleMoves)
             {
                 newBoard = board.GenerateNewBoardFromMove(move);
 
                 // Recursividad
-                scoringMove = NegamaxAB(newBoard, (byte)(depth + 1), -beta, -Math.Max(alfa, bestScore));
+                scoringSquare = NegamaxAB(newBoard, (byte)(depth + 1), -beta, -Math.Max(alfa, bestScore));
 
-                int invertedScore = -scoringMove.score;
+                int invertedScore = -scoringSquare.Score;
 
                 // Actualizar mejor score
                 if (invertedScore > bestScore)
                 {
                     bestScore = invertedScore;
-                    bestMove = move;
+                    bestMove = move.Index;
                 }
                 if (bestScore >= beta)
                 {
-                    scoringMove = new ScoringMove(bestScore, bestMove);
-                    return scoringMove;
+                    scoringSquare = new ScoringSquare(bestScore, bestMove);
+                    return scoringSquare;
                 }
             }
-            scoringMove = new ScoringMove(bestScore, bestMove);
+            scoringSquare = new ScoringSquare(bestScore, bestMove);
         }
-        return scoringMove;
+        return scoringSquare;
     }
 
-    ScoringMove AspirationSearch(Board board)
+    ScoringSquare AspirationSearch(Board board)
     {
         int alfa, beta;
-        ScoringMove move;
+        ScoringSquare move;
         string aspirationPath = "Aspiration Path: ";
 
         if (previousScore != MINUS_INFINITE)
@@ -194,12 +202,12 @@ public class Ai
             while (true)
             {
                 move = NegamaxAB(board, 0, alfa, beta);
-                if (move.score <= alfa)
+                if (move.Score <= alfa)
                 {
                     aspirationPath += "Fail soft alfa.";
                     alfa = MINUS_INFINITE;
                 }
-                else if (move.score >= beta)
+                else if (move.Score >= beta)
                 {
                     aspirationPath += "Fail soft beta.";
                     beta = INFINITE;
@@ -216,9 +224,134 @@ public class Ai
             aspirationPath += "Normal Negamax";
             move = NegamaxAB(board, 0, MINUS_INFINITE, INFINITE);
         }
-        previousScore = move.score;
-        aspirationPathText.text = aspirationPath;
+        previousScore = move.Score;
+        //aspirationPathText.text = aspirationPath;
         return move;
     }
-    */
+
+    /*
+    ScoringSquare MTD(Board board)
+    {
+        int gamma, guess = globalGuess;
+        ScoringSquare scoringMove = null;
+        maximumExploredDepth = 0;
+
+        //string output = "MTD Path: ";
+
+
+        for (byte i = 0; i < MAX_ITERATIONS; i++)
+        {
+            gamma = guess;
+            scoringMove = Test(board, 0, gamma - 1);
+            guess = scoringMove.Score;
+            if (guess == gamma)
+            {
+                globalGuess = guess;
+                //output += "guess econtrado en iteracion " + i;
+                //MTDPathText.text = output;
+                return scoringMove;
+            }
+        }
+        //output += "guess no encontrado";
+        //MTDPathText.text = output;
+        globalGuess = guess;
+        return scoringMove;
+    }
+
+    ScoringSquare Test(Board board, byte depth, int gamma)
+    {
+        // Devuelve el score del tablero y la jugada con la que se llega a él.
+        int bestMove = 0;
+        int bestScore = 0;
+
+        ScoringSquare scoringMove; // score, movimiento
+        Board newBoard;
+        Record record;
+
+        if (depth > maximumExploredDepth)
+        {
+            maximumExploredDepth = depth;
+        }
+
+        record = transpositionTable.GetRecord(board.hashValue);
+
+        if (record != null)
+        {
+            if (record.depth > MAX_DEPTH - depth)
+            {
+                if (record.minScore > gamma)
+                {
+                    scoringMove = new ScoringSquare(record.minScore, record.bestMove);
+                    return scoringMove;
+                }
+                if (record.maxScore < gamma)
+                {
+                    scoringMove = new ScoringSquare(record.maxScore, record.bestMove);
+                    return scoringMove;
+                }
+            }
+        }
+        else
+        {
+            record = new Record();
+            record.hashValue = board.hashValue;
+            record.depth = MAX_DEPTH - depth;
+            record.minScore = MINUS_INFINITE;
+            record.maxScore = INFINITE;
+        }
+
+
+        // Comprobar si hemos terminado de hacer recursión
+        if (board.IsEndOfGame() || depth == MAX_DEPTH)
+        {
+            if (depth % 2 == 0)
+            {
+                record.maxScore = board.Evaluate(activePlayer);
+            }
+            else
+            {
+                record.maxScore = -board.Evaluate(activePlayer);
+            }
+            record.minScore = record.maxScore;
+            transpositionTable.SaveRecord(record);
+            scoringMove = new ScoringSquare(record.maxScore, 0);
+        }
+        else
+        {
+            bestScore = MINUS_INFINITE;
+
+            int[] possibleMoves;
+            possibleMoves = board.PossibleMoves();
+
+            foreach (int move in possibleMoves)
+            {
+                // newBoard = board.GenerateNewBoardFromMove(move);
+                newBoard = board.HashGenerateNewBoardFromMove(move);
+
+                // Recursividad
+                scoringMove = Test(newBoard, (byte)(depth + 1), -gamma);
+
+                int invertedScore = -scoringMove.Score;
+
+                // Actualizar mejor score
+                if (invertedScore > bestScore)
+                {
+                    bestScore = invertedScore;
+                    bestMove = move;
+                    record.bestMove = move;
+                }
+                if (bestScore < gamma)
+                {
+                    record.maxScore = bestScore;
+                }
+                else
+                {
+                    record.minScore = bestScore;
+                }
+            }
+            transpositionTable.SaveRecord(record);
+            scoringMove = new ScoringSquare(bestScore, bestMove);
+        }
+        return scoringMove;
+    }*/
 }

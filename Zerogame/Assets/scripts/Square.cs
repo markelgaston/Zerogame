@@ -3,9 +3,12 @@
 public class Square
 {
     Line[] lines;
-    bool[] pressedLines;
-    
-    bool closedSquare;
+
+    public Line[] Lines
+    {
+        get { return lines; }
+        set { lines = value; }
+    }
 
     int index;
 
@@ -27,18 +30,17 @@ public class Square
     public Square()
     {
         lines = new Line[4];
-        pressedLines = new bool[4];
         player = "";
     }
     
-    public bool GetPressed(int index)
+    public bool GetIsPressed(int index)
     {
-        return pressedLines[index];
+        return lines[index].IsPressed;
     }
 
     public void SetPressed(int index, bool value)
     {
-        pressedLines[index] = value;
+        lines[index].IsPressed = value;
     }
 
     public void SetLine(string direction, Line newLine, Square parentSquare)
@@ -63,8 +65,13 @@ public class Square
 
     public void SetLine(int index, Line newLine, Square parentSquare)
     {
-        lines[index] = newLine;
+        SetLine(index, newLine);
         lines[index].AddSquare(parentSquare, index);
+    }
+
+    public void SetLine(int index, Line newLine)
+    {
+        lines[index] = newLine;
     }
 
     public Line GetLine(string direction)
@@ -96,20 +103,16 @@ public class Square
 
     public bool IsClosedSquare()
     {
-        if (closedSquare)
-            return true;
-
-        else
+        int pressedCount = 0;
+        for (int i = 0; i < 4; ++i)
         {
-            int pressedCount = 0;
-            for (int i = 0; i < 4; ++i)
-            {
-                if (GetPressed(i))
-                    ++pressedCount;
-            }
+            if (GetIsPressed(i))
+                ++pressedCount;
+        }
 
-            if (pressedCount == 4)
-                return true;
+        if (pressedCount == 4)
+        {
+            return true;
         }
 
         return false;
@@ -119,16 +122,16 @@ public class Square
     {
         foreach(Line l in lines)
         {
-            l.SetColor(color);
+            l.LineGraphic.SetColor(color);
         }
     }
 
     public int GetPressedLines()
     {
         int count = 0;
-        foreach(bool pressed in pressedLines) 
+        foreach(Line l in lines) 
         {
-            if(pressed)
+            if(l.IsPressed)
                 ++count;
         }
 

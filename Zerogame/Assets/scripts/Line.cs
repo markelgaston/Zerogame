@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Line : MonoBehaviour
+public class Line
 {
-    Image image;
+    LineGraphic lineGraphic;
 
-    Vector3 initScale;
+    public LineGraphic LineGraphic
+    {
+        get { return lineGraphic; }
+    }
 
     List<Square> parentSquares = new List<Square>();
     List<int> indicesInParent = new List<int>();
@@ -15,11 +18,13 @@ public class Line : MonoBehaviour
     public List<Square> ParentSquares
     {
         get { return parentSquares; }
+        set { parentSquares = value; }
     }
 
     public List<int> IndicesInParent
     {
         get { return indicesInParent; }
+        set { indicesInParent = value; }
     }
     
     bool pressed;
@@ -27,35 +32,27 @@ public class Line : MonoBehaviour
     public bool IsPressed
     {
         get { return pressed; }
+        set { pressed = value; }
     }
     
-    private void Start()
+    public void InitGraphic(LineGraphic _graphic)
     {
-        image = GetComponent<Image>();
-        initScale = transform.localScale;
+        lineGraphic = _graphic;
+        lineGraphic.SetLine(this);
     }
 
     public void AddSquare(Square square, int index)
     {
         parentSquares.Add(square);
         indicesInParent.Add(index);
-    }
-    
-    public void SetColor(Color color)
-    {
-        Animator animator = GetComponent<Animator>();
-        animator.SetTrigger("Normal");
-        transform.localScale = initScale;
-        animator.enabled = false;
-        image.color = color;
-    }
+    }    
     
     public void On_Pressed()
     {
         if (!pressed)
         {
             pressed = true;
-            GameController.Instance.End_Turn(this); // Ver si ha cerrado cuadrado
+            GameController.Instance.End_Turn(this);
         }
     }
 

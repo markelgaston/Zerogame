@@ -53,10 +53,10 @@ public class Board
         if (anyClosedSquare)
             foreach (Square square in squaresClosed)
             {
-                square.SetClosedColor(Color.gray);
+                square.SetClosedColor(Color.red);
             }
         else
-            move.SetColor(Color.red);
+            move.LineGraphic.SetColor(Color.blue);
 
     }
 
@@ -120,9 +120,7 @@ public class Board
     /// <returns></returns>
     public int Evaluate(int activePlayer)
     {
-        int[] evaluationMatrix = new int [squares.Length];
         int bestScore = 0;
-        List<int> bestScores = new List<int>();
 
         if (IsEndOfGame())
         {
@@ -153,19 +151,19 @@ public class Board
                 }
                 else if (pressedLines == 3)
                 {
-                    bestScore += 5;
+                    bestScore -= 20;
 
                 }
                 else
                 {
-                    bestScore += -5;
+                    bestScore += 20;
                 }
             }
 
-            else if (squares[i].Player == players[activePlayer])
+            /*else if (squares[i].Player == players[activePlayer])
                 bestScore += 20;
 
-            else bestScore -= 20;
+            else bestScore -= 20;*/
         }
 
         //Debug.Log(bestScore);
@@ -200,6 +198,7 @@ public class Board
         Board newBoard = this.DuplicateBoard();
         
         Line line = newBoard.ChooseLine(move.Index);
+        line.IsPressed = true;
         
         if (!move.IsClosedSquare())
             newBoard.activePlayer = NextPlayer();
@@ -210,23 +209,35 @@ public class Board
     private Board DuplicateBoard()
     {
         Board newBoard = new Board(rows, columns);
+
         for (int i = 0; i < squares.Length; i++)
         {
             newBoard.squares[i] = new Square();
             //newBoard.squares[i].Index = this.squares[i].Index;
+            Line[] newLines = new Line[4];
 
-            for(int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++)
             {
-                newBoard.squares[i].SetPressed(j, squares[i].GetPressed(j));
+                newLines[j] = new Line();
+                newLines[j].ParentSquares = squares[i].GetLine(j).ParentSquares;
+                newLines[j].IndicesInParent = squares[i].GetLine(j).IndicesInParent;
+                newBoard.squares[i].SetLine(j, newLines[j]);
+                newBoard.squares[i].SetPressed(j, squares[i].GetIsPressed(j));
             }
+
+            newBoard.squares[i].Index = squares[i].Index;
+            newBoard.squares[i].Lines = newLines;
+            newBoard.squares[i].Player = squares[i].Player;
         }
         newBoard.activePlayer = this.activePlayer;
 
         return newBoard;
     }
 
-    public bool IsSquare(Line line) {
-        foreach(Square square in line.ParentSquares) {
+    public bool IsSquare(Line line)
+    {
+        foreach(Square square in line.ParentSquares)
+        {
             if(square.IsClosedSquare())
                 return true;
         }
@@ -278,18 +289,52 @@ public class Board
     public Line ChooseLine(int index)
     {
         Line line = null;
+
+        // Recorro las líneas del cuadrado seleccionado
         for (int i = 0; i < 4; i++)
         {
-            if (!squares[index].GetPressed(i))
+            // Busco líneas sin pulsar
+            if (!squares[index].GetIsPressed(i))
             {
                 line = squares[index].GetLine(i);
-                squares[index].SetPressed(i, true);
-                break;
-            }
+            }            
         }
 
         return line;
     }
+
+    /*public Line ChooseBestLine(int index)
+    {
+        List<int> indices = new List<int>();
+
+        // Recorro las líneas del cuadrado seleccionado
+        for (int i = 0; i < 4; i++)
+        {
+            // Busco líneas sin pulsar
+            if (!squares[index].GetIsPressed(i))
+            {
+                indices.Add(i);
+            }
+        }
+
+        int bestIndex = indices[0];
+
+        for (int i = 1; i < indices.Count; i++)
+        {
+            Line l = squares[index].GetLine(i);
+
+            foreach (Square parent in l.ParentSquares)
+            {
+                if (parent.GetPressedLines() != 2)
+                {
+                    bestIndex = i;
+                    break;
+                }
+            }
+        }
+
+        return squares[index].GetLine(bestIndex);
+    }*/
 
     void FinalText(Text score, Text winner, int[] count, int bestIndex)
     {

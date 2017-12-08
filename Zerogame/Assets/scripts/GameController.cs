@@ -88,7 +88,11 @@ public class GameController : MonoBehaviour
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
-                        board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
+
+                        board.lines[s_rows, s_columns] = new Line();
+                        LineGraphic lineGraphic = obj.GetComponent<LineGraphic>();
+                        board.lines[s_rows, s_columns].InitGraphic(lineGraphic);
+
                         s_columns++;
                     }
                 }
@@ -103,7 +107,11 @@ public class GameController : MonoBehaviour
                         obj.GetComponent<RectTransform>().localRotation = new Quaternion(0, 0, 90, 90);
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(lines_container.transform, true);
-                        board.lines[s_rows, s_columns] = obj.GetComponent<Line>();
+
+                        board.lines[s_rows, s_columns] = new Line();
+                        LineGraphic lineGraphic = obj.GetComponent<LineGraphic>();
+                        board.lines[s_rows, s_columns].InitGraphic(lineGraphic);
+
                         s_columns++;
                     }
                     if ((column + 1) % 2 == 0)
@@ -168,9 +176,8 @@ public class GameController : MonoBehaviour
     public void AIEnded(ScoringSquare scoringSquare)
     {
         Line line = board.ChooseLine(scoringSquare.SquareIndex);
-        
-        //End_Turn(line);
-        line.On_Pressed();
+
+        line.LineGraphic.GraphicPressed();
     }
 
     public void End_Turn(Line line)
@@ -181,7 +188,7 @@ public class GameController : MonoBehaviour
         }
 
         board.UpdateColours(line);
-
+        
         if(!board.IsSquare(line))
             board.activePlayer = board.NextPlayer();
 
