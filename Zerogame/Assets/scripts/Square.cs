@@ -2,6 +2,9 @@
 
 public class Square
 {
+    /// <summary>
+    /// Líneas que contiene un cuadrado
+    /// </summary>
     Line[] lines;
 
     public Line[] Lines
@@ -10,6 +13,9 @@ public class Square
         set { lines = value; }
     }
 
+    /// <summary>
+    /// Índice del cuadrado en el tablero
+    /// </summary>
     int index;
 
     public int Index
@@ -18,6 +24,9 @@ public class Square
         set { index = value; }
     }
     
+    /// <summary>
+    /// Nombre del jugador que cierra el cuadrado actual
+    /// </summary>
     string player;
 
     public string Player
@@ -26,23 +35,41 @@ public class Square
         set { player = value; }
     }
 
-
+    /// <summary>
+    /// Constructor de cuadrado
+    /// </summary>
     public Square()
     {
         lines = new Line[4];
         player = "";
     }
     
+    /// <summary>
+    /// Devuelve si una línea está o no pulsada
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public bool GetIsPressed(int index)
     {
         return lines[index].IsPressed;
     }
 
+    /// <summary>
+    /// Actualiza una línea a estado pulsada
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
     public void SetPressed(int index, bool value)
     {
         lines[index].IsPressed = value;
     }
 
+    /// <summary>
+    /// Establece una línea mediante coordenadas y añade un cuadrado padre
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="newLine"></param>
+    /// <param name="parentSquare"></param>
     public void SetLine(string direction, Line newLine, Square parentSquare)
     {
         if (direction.Equals("N"))
@@ -63,47 +90,47 @@ public class Square
         }
     }
 
+    /// <summary>
+    /// Establece una línea mediante índice y añade un cuadrado padre
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="newLine"></param>
+    /// <param name="parentSquare"></param>
     public void SetLine(int index, Line newLine, Square parentSquare)
     {
         SetLine(index, newLine);
         lines[index].AddSquare(parentSquare, index);
     }
 
+    /// <summary>
+    /// Establece una línea mediante índice
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="newLine"></param>
     public void SetLine(int index, Line newLine)
     {
         lines[index] = newLine;
     }
 
-    public Line GetLine(string direction)
-    {
-        if (direction.Equals("N"))
-        {
-            return lines[0];
-        }
-        else if (direction.Equals("S"))
-        {
-            return lines[1];
-        }
-        else if (direction.Equals("E"))
-        {
-            return lines[2];
-        }
-        else if (direction.Equals("W"))
-        {
-            return lines[3];
-        }
-
-        return null;
-    }
-
+    /// <summary>
+    /// Se obtiene una línea del cuadrado mediante índice
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public Line GetLine(int index)
     {
         return lines[index];
     }
 
+    /// <summary>
+    /// Devuelve si el cuadrado tiene todas sus líneas pulsadas o no
+    /// </summary>
+    /// <returns></returns>
     public bool IsClosedSquare()
     {
         int pressedCount = 0;
+
+        // Se recorren las 4 líneas del cuadrado
         for (int i = 0; i < 4; ++i)
         {
             if (GetIsPressed(i))
@@ -118,6 +145,10 @@ public class Square
         return false;
     }
 
+    /// <summary>
+    /// Actualiza el color de todas las líneas de un cuadrado una vez ha sido cerrado
+    /// </summary>
+    /// <param name="color"></param>
     public void SetClosedColor(Color color)
     {
         foreach(Line l in lines)
@@ -126,6 +157,10 @@ public class Square
         }
     }
 
+    /// <summary>
+    /// Devuelve el número de líneas pulsadas en un cuadrado
+    /// </summary>
+    /// <returns></returns>
     public int GetPressedLines()
     {
         int count = 0;

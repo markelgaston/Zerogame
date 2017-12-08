@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoringSquare {
-    
+public class ScoringSquare
+{
+    /// <summary>
+    /// Índice del cuadrado en el tablero
+    /// </summary>
     int squareIndex;
+
+    /// <summary>
+    /// Puntuación del movimiento
+    /// </summary>
     int score;
 
     public int SquareIndex {
@@ -15,8 +22,13 @@ public class ScoringSquare {
         get { return score; }
     }
 
-    public ScoringSquare(int _score, int _squareIndex) {
-        
+    /// <summary>
+    /// Constructor del movimiento
+    /// </summary>
+    /// <param name="_score"></param>
+    /// <param name="_squareIndex"></param>
+    public ScoringSquare(int _score, int _squareIndex)
+    {        
         squareIndex = _squareIndex;
         score = _score;
     }

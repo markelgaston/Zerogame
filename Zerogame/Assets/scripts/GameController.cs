@@ -17,26 +17,44 @@ public class GameController : MonoBehaviour
     public GameObject lines_container;
     public GameObject texts_container;
 
+    /// <summary>
+    /// Texto del jugador activo en un turno
+    /// </summary>
     public Text activePlayerText;
 
-    [Range(3, 12)]
+    [Range(3, 7)]
     public int rows, columns;
 
+    /// <summary>
+    /// Establecen las medidas del tablero según el input del jugador
+    /// </summary>
     int realRows, realColumns;
 
+    /// <summary>
+    /// Panel en el que se sitúan los objetos del tablero
+    /// </summary>
     public RectTransform panel;
 
     public Board board;
 
-    float distance = 72; //distance between nodes
+    /// <summary>
+    /// Distancia entre objetos del tablero
+    /// </summary>
+    float distance = 72;
 
     public Ai ai;
 
     public GameObject turnTexts;
     public GameObject endTexts;
 
+    /// <summary>
+    /// Círculos separadores de líneas
+    /// </summary>
     public Sprite[] circleSprites;
 
+    /// <summary>
+    /// Panel de información
+    /// </summary>
     public GameObject controlPanel;
 
     public static GameController Instance;
@@ -49,9 +67,7 @@ public class GameController : MonoBehaviour
             Instance = this;
         
         endTexts.SetActive(false);
-
-        //ai = new Ai();
-
+        
         realRows = rows * 2 + 1;
         realColumns = columns * 2 + 1;
 
@@ -62,6 +78,7 @@ public class GameController : MonoBehaviour
         int s_rows = 0,
             s_columns = 0;
 
+        // Se inicializa el tablero
         board = new Board(rows, columns);
         board.InitializePlayerText(this.activePlayerText);
 
@@ -70,7 +87,7 @@ public class GameController : MonoBehaviour
         CreateBoard();
         board.lines = new Line[rows * 2 + 1, columns + 1];
 
-        //Instantiate square/circle
+        // Instancias de círculos y líneas
         for (int row = 0; row < realRows; row++)
         {
             for (int column = 0; column < realColumns; column++)
@@ -137,6 +154,9 @@ public class GameController : MonoBehaviour
         board.FindSquares();
     }
 
+    /// <summary>
+    /// Crea un tablero mediante cuadrados
+    /// </summary>
     private void CreateBoard()
     {
         board.squares = new Square[rows * columns];
@@ -148,13 +168,16 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Ajusta el panel según las medidas de la pantalla y del tamaño del tablero
+    /// </summary>
     void PanelFit()
     {
         RectTransform boardRT = GetComponent<RectTransform>();
-        panel.position = new Vector2(boardRT.position.x - 50, boardRT.position.y + 50);
+        panel.position = new Vector2(boardRT.position.x + 20, boardRT.position.y + 70);
         
-        panel.sizeDelta = new Vector2((board.boardElements[realRows - 1, realColumns - 1].GetComponent<RectTransform>().position.x - board.boardElements[0, 0].GetComponent<RectTransform>().position.x) + 100,
-                                      -(board.boardElements[realRows - 1, realColumns - 1].GetComponent<RectTransform>().position.y - board.boardElements[0, 0].GetComponent<RectTransform>().position.y) + 100);
+        panel.sizeDelta = new Vector2((board.boardElements[realRows - 1, realColumns - 1].GetComponent<RectTransform>().position.x - 150 - board.boardElements[0, 0].GetComponent<RectTransform>().position.x) + 100,
+                                      -(board.boardElements[realRows - 1, realColumns - 1].GetComponent<RectTransform>().position.y - 150 - board.boardElements[0, 0].GetComponent<RectTransform>().position.y) + 100);
 
         int screenWidth = Screen.width;
         int screenHeight = Screen.height;
@@ -169,26 +192,34 @@ public class GameController : MonoBehaviour
 
         transform.SetParent(panel.transform, true);
         panel.localScale = new Vector3(square_scale * .8f, square_scale * .8f, 0);
-        panel.anchorMin = new Vector2(.5f, .42f);
-        panel.anchorMax = new Vector2(.5f, .42f);
+        panel.anchorMin = new Vector2(.5f, .5f);
+        panel.anchorMax = new Vector2(.5f, .5f);
         panel.sizeDelta = Vector2.zero;
         panel.anchoredPosition = Vector2.zero;
         
     }
     
+    /// <summary>
+    /// Controla el movimiento final de la IA
+    /// </summary>
+    /// <param name="scoringSquare"></param>
     public void AIEnded(ScoringSquare scoringSquare)
     {
         Line line = board.ChooseLine(scoringSquare.SquareIndex);
 
-        line.LineGraphic.GraphicPressed();
+        line.On_Pressed();
     }
 
+    /// <summary>
+    /// Maneja el cambio de turnos y la actualización del tablero
+    /// </summary>
+    /// <param name="line"></param>
     public void End_Turn(Line line)
     {
-        for(int i = 0; i < line.ParentSquares.Count; ++i)
+        /*for(int i = 0; i < line.ParentSquares.Count; ++i)
         {
             line.ParentSquares[i].SetPressed(line.IndicesInParent[i], true);
-        }
+        }*/
 
         board.UpdateColours(line);
         
@@ -202,6 +233,9 @@ public class GameController : MonoBehaviour
             ai.Play(board, board.activePlayer);
     }
 
+    /// <summary>
+    /// Control del panel de información
+    /// </summary>
     public void ShowControl() {
 
         if(controlPanel.activeInHierarchy)
@@ -211,6 +245,9 @@ public class GameController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Comienza una nueva partida
+    /// </summary>
     public void RestartGame() {
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

@@ -10,16 +10,37 @@ public class Board
 
     public Square[] squares;
 
+    /// <summary>
+    /// Textos del centro de cada cuadrado
+    /// </summary>
     public List<Text> texts = new List<Text>();
 
+    /// <summary>
+    /// Elementos gráficos del tablero
+    /// </summary>
     public GameObject[,] boardElements;
 
+    /// <summary>
+    /// Líneas del tablero
+    /// </summary>
     public Line[,] lines;
     
+    /// <summary>
+    /// Nombre de los jugadores
+    /// </summary>
     public string[] players = { "Jugador", "Ai"};
 
+    /// <summary>
+    /// Jugador de la ronda actual
+    /// </summary>
     public int activePlayer = 0;
 
+
+    /// <summary>
+    /// Constructor de tablero. Inicializa los tamaños
+    /// </summary>
+    /// <param name="_rows"></param>
+    /// <param name="_columns"></param>
     public Board(int _rows, int _columns)
     {
         rows = _rows;
@@ -28,28 +49,40 @@ public class Board
         squares = new Square[rows * columns];
     }
 
+    /// <summary>
+    /// Establece el texto del turno al empezar el juego
+    /// </summary>
+    /// <param name="_text"></param>
     public void InitializePlayerText(Text _text)
     {
         GameController.Instance.activePlayerText = _text;
         GameController.Instance.activePlayerText.text = players[0];
     }
-    
+
+    /// <summary>
+    /// Actualiza los colores de las líneas según la jugada
+    /// </summary>
+    /// <param name="move"></param>
     public void UpdateColours(Line move)
     {
         bool anyClosedSquare = false;
         List<Square> squaresClosed = new List<Square>();
 
+        // Busca si la línea ha cerrado alguno de los cuadrados a los que pertenece
         foreach (Square square in move.ParentSquares)
         {
             if (square.IsClosedSquare())
             {
                 anyClosedSquare = true;
                 squaresClosed.Add(square);
+
+                // Actualiza el texto con el jugador activo en caso de cerrar un cuadrado
                 texts[square.Index].text = players[activePlayer];
                 square.Player = players[activePlayer];
             }
         }
 
+        // En caso de haber encontrado algún cuadrado cerrado...
         if (anyClosedSquare)
             foreach (Square square in squaresClosed)
             {
@@ -60,6 +93,9 @@ public class Board
 
     }
 
+    /// <summary>
+    /// Inicializa los cuadrados con las líneas ya creadas
+    /// </summary>
     public void FindSquares()
     {
         int squareIndex = 0;
@@ -100,7 +136,7 @@ public class Board
     }
 
     /// <summary>
-    /// Comprueba si están todas las casillas marcadas
+    /// Comprueba si están todos los cuadrados cerrados
     /// </summary>
     /// <returns></returns>
     public bool IsEndOfGame()
@@ -115,7 +151,7 @@ public class Board
     }
 
     /// <summary>
-    /// Devuelve un valor del tablero
+    /// Devuelve un valor del tablero según su estado
     /// </summary>
     /// <returns></returns>
     public int Evaluate(int activePlayer)
@@ -133,6 +169,7 @@ public class Board
                 return -500;
         }
 
+        // Por cada cuadrado se analiza su situación y se puntúa
         for(int i = 0; i < squares.Length; ++i)
         {
             int pressedLines = squares[i].GetPressedLines();
@@ -158,21 +195,14 @@ public class Board
                 {
                     bestScore += 20;
                 }
-            }
-
-            /*else if (squares[i].Player == players[activePlayer])
-                bestScore += 20;
-
-            else bestScore -= 20;*/
+            }            
         }
-
-        //Debug.Log(bestScore);
 
         return bestScore;
     }
 
     /// <summary>
-    /// Todas los posibles movimientos de un estado del tablero
+    /// Todos los posibles movimientos de un estado del tablero
     /// </summary>
     /// <returns></returns>
     public List<Square> PossibleMoves()
@@ -197,6 +227,7 @@ public class Board
     {
         Board newBoard = this.DuplicateBoard();
         
+        // Escoje una línea sin pulsar de un cuadrado
         Line line = newBoard.ChooseLine(move.Index);
         line.IsPressed = true;
         
@@ -206,16 +237,21 @@ public class Board
         return newBoard;
     }
 
+    /// <summary>
+    /// Duplica el tablero y las variables necesarias dentro del mismo
+    /// </summary>
+    /// <returns></returns>
     private Board DuplicateBoard()
     {
         Board newBoard = new Board(rows, columns);
 
         for (int i = 0; i < squares.Length; i++)
         {
+            // Se crean cuadrados y líneas nuevas
             newBoard.squares[i] = new Square();
-            //newBoard.squares[i].Index = this.squares[i].Index;
             Line[] newLines = new Line[4];
 
+            // Se asignan los estados del tablero actual al nuevo
             for (int j = 0; j < 4; j++)
             {
                 newLines[j] = new Line();
@@ -234,6 +270,11 @@ public class Board
         return newBoard;
     }
 
+    /// <summary>
+    /// Devuelve true si se ha cerrado un cuadrado
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
     public bool IsSquare(Line line)
     {
         foreach(Square square in line.ParentSquares)
@@ -245,6 +286,9 @@ public class Board
         return false;
     }
 
+    /// <summary>
+    /// Termina el juego en caso de haberse completado el tablero
+    /// </summary>
     public void FinishGame()
     {
         GameController.Instance.turnTexts.SetActive(false);
@@ -261,10 +305,17 @@ public class Board
         GameController.Instance.endTexts.SetActive(true);
     }
 
+    /// <summary>
+    /// Conteo de puntos de cada jugador
+    /// </summary>
+    /// <param name="bestIndex"></param>
+    /// <returns></returns>
     int[] FinalScore(out int bestIndex)
     {
         int[] count = new int[players.Length]; // Número de jugadores
         int bestScore = -1;
+
+        // Índice del jugador ganador
         bestIndex = -1;
 
         // Conteo
@@ -286,6 +337,11 @@ public class Board
         return count;
     }
 
+    /// <summary>
+    /// Elije una línea de un cuadrado
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public Line ChooseLine(int index)
     {
         Line line = null;
@@ -303,45 +359,21 @@ public class Board
         return line;
     }
 
-    /*public Line ChooseBestLine(int index)
-    {
-        List<int> indices = new List<int>();
-
-        // Recorro las líneas del cuadrado seleccionado
-        for (int i = 0; i < 4; i++)
-        {
-            // Busco líneas sin pulsar
-            if (!squares[index].GetIsPressed(i))
-            {
-                indices.Add(i);
-            }
-        }
-
-        int bestIndex = indices[0];
-
-        for (int i = 1; i < indices.Count; i++)
-        {
-            Line l = squares[index].GetLine(i);
-
-            foreach (Square parent in l.ParentSquares)
-            {
-                if (parent.GetPressedLines() != 2)
-                {
-                    bestIndex = i;
-                    break;
-                }
-            }
-        }
-
-        return squares[index].GetLine(bestIndex);
-    }*/
-
+    /// <summary>
+    /// Texto al finalizar el juego
+    /// </summary>
+    /// <param name="score"></param>
+    /// <param name="winner"></param>
+    /// <param name="count"></param>
+    /// <param name="bestIndex"></param>
     void FinalText(Text score, Text winner, int[] count, int bestIndex)
     {
         string separator = "   -   ";
         winner.text = players[bestIndex] + " wins!";
 
         score.text = "";
+
+        // Se recorren todos los jugadores y se pintan junto con su puntuación
         for (int i = 0; i < count.Length; i++)
         {
             score.text += players[i] + ": " + count[i];

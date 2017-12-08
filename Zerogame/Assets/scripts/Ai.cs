@@ -23,6 +23,11 @@ public class Ai : MonoBehaviour
 
     public Toggle[] toggle;
 
+    /// <summary>
+    /// Desordena una lista de elementos
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
     public void Shuffle<T>(IList<T> list)
     {
         int n = list.Count;
