@@ -57,6 +57,16 @@ public class GameController : MonoBehaviour
     /// </summary>
     public GameObject controlPanel;
 
+    /// <summary>
+    /// Panel de selección de jugadores / IAs
+    /// </summary>
+    public GameObject playerSelectionPanel;
+
+    /// <summary>
+    /// Lista de jugadores. Si el string contiene "Ai", será una IA
+    /// </summary>
+    List<string> players;
+
     public static GameController Instance;
 
     private void Awake()
@@ -67,7 +77,40 @@ public class GameController : MonoBehaviour
             Instance = this;
         
         endTexts.SetActive(false);
+
+        players = new List<string>();
+        players.Add("Jugador1");
         
+    }
+
+    /// <summary>
+    /// Se activa desde un toggle. Añade o quita un jugador a la lista de jugadores
+    /// </summary>
+    /// <param name="player">Tipo de jugador (real/IA)</param>
+    public void TogglePlayer(string player) 
+    {
+        bool found = false;
+        foreach(string i in players)
+        {
+            if(i == player)
+            {
+                players.Remove(i);
+                found = true;
+                break;
+            }
+        }
+        if(!found)
+            players.Add(player);
+    }
+
+    /// <summary>
+    /// Comienza el juego al darle al botón
+    /// </summary>
+    public void Play()
+    {
+
+        playerSelectionPanel.SetActive(false);
+
         realRows = rows * 2 + 1;
         realColumns = columns * 2 + 1;
 
@@ -79,7 +122,7 @@ public class GameController : MonoBehaviour
             s_columns = 0;
 
         // Se inicializa el tablero
-        board = new Board(rows, columns);
+        board = new Board(rows, columns, players.ToArray());
         board.InitializePlayerText(this.activePlayerText);
 
         board.boardElements = new GameObject[realRows, realColumns];
@@ -88,21 +131,16 @@ public class GameController : MonoBehaviour
         board.lines = new Line[rows * 2 + 1, columns + 1];
 
         // Instancias de círculos y líneas
-        for (int row = 0; row < realRows; row++)
-        {
-            for (int column = 0; column < realColumns; column++)
-            {
-                if ((row + 1) % 2 != 0)
-                {
-                    if ((column + 1) % 2 != 0)
-                    {
+        for(int row = 0; row < realRows; row++) {
+            for(int column = 0; column < realColumns; column++) {
+                if((row + 1) % 2 != 0) {
+                    if((column + 1) % 2 != 0) {
                         GameObject obj = Instantiate(circle, pos, this.transform.rotation, this.transform);
                         obj.GetComponent<Image>().sprite = circleSprites[UnityEngine.Random.Range(0, 5)];
                         board.boardElements[row, column] = obj;
                         obj.transform.SetParent(circles_container.transform, true);
                     }
-                    if ((column + 1) % 2 == 0)
-                    {
+                    if((column + 1) % 2 == 0) {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
@@ -117,10 +155,8 @@ public class GameController : MonoBehaviour
                     }
                 }
 
-                if ((row + 1) % 2 == 0)
-                {
-                    if ((column + 1) % 2 != 0)
-                    {
+                if((row + 1) % 2 == 0) {
+                    if((column + 1) % 2 != 0) {
                         GameObject obj = Instantiate(line, pos, this.transform.rotation, this.transform);
                         obj.name = "Line " + ++count;
                         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 100);
@@ -134,8 +170,7 @@ public class GameController : MonoBehaviour
 
                         s_columns++;
                     }
-                    if ((column + 1) % 2 == 0)
-                    {
+                    if((column + 1) % 2 == 0) {
                         GameObject obj = Instantiate(text, pos, this.transform.rotation, this.transform);
                         board.boardElements[row, column] = obj;
                         board.texts.Add(obj.GetComponent<Text>());

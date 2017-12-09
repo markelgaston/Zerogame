@@ -41,12 +41,14 @@ public class Board
     /// </summary>
     /// <param name="_rows"></param>
     /// <param name="_columns"></param>
-    public Board(int _rows, int _columns)
+    public Board(int _rows, int _columns, string[] _players)
     {
         rows = _rows;
         columns = _columns;
 
         squares = new Square[rows * columns];
+
+        players = _players;
     }
 
     /// <summary>
@@ -243,7 +245,7 @@ public class Board
     /// <returns></returns>
     private Board DuplicateBoard()
     {
-        Board newBoard = new Board(rows, columns);
+        Board newBoard = new Board(rows, columns, players);
 
         for (int i = 0; i < squares.Length; i++)
         {
