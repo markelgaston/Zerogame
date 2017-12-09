@@ -336,6 +336,18 @@ public class Board
             }
         }
 
+        int drawCount = 0;
+        foreach(int i in count)
+        {
+            if (i == bestScore)
+            {
+                ++drawCount;
+            }
+        }
+
+        if (drawCount > 1)
+            bestIndex = -1;
+
         return count;
     }
 
@@ -371,7 +383,11 @@ public class Board
     void FinalText(Text score, Text winner, int[] count, int bestIndex)
     {
         string separator = "   -   ";
-        winner.text = players[bestIndex] + " wins!";
+
+        if (bestIndex == -1)
+            winner.text = "It's a draw!";
+        else
+            winner.text = players[bestIndex] + " wins!";
 
         score.text = "";
 
