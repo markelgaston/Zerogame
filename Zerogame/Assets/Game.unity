@@ -3497,7 +3497,7 @@ MonoBehaviour:
   texts_container: {fileID: 1251725624}
   activePlayerText: {fileID: 502404553}
   rows: 3
-  columns: 4
+  columns: 3
   panel: {fileID: 1824114170}
   ai: {fileID: 299506899}
   turnTexts: {fileID: 1452279276}
