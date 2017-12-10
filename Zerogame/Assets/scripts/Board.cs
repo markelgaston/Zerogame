@@ -295,16 +295,15 @@ public class Board
     {
         GameController.Instance.turnTexts.SetActive(false);
         
-        RectTransform endTextRectTr = GameController.Instance.endTexts.GetComponent<RectTransform>();
 
-        Text scoreText = endTextRectTr.GetChild(0).GetComponent<Text>();
-        Text winnerText = endTextRectTr.GetChild(1).GetComponent<Text>();
+        Text scoreText = GameController.Instance.endScore.GetComponent<Text>();
+        Text winnerText = GameController.Instance.winnerText.GetComponent<Text>();
 
         int bestIndex = 0;
         int[] count = FinalScore(out bestIndex);
         FinalText(scoreText, winnerText, count, bestIndex);
 
-        GameController.Instance.endTexts.SetActive(true);
+        GameController.Instance.EndTexts(true);
     }
 
     /// <summary>

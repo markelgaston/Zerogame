@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
@@ -45,7 +42,8 @@ public class GameController : MonoBehaviour
     public Ai ai;
 
     public GameObject turnTexts;
-    public GameObject endTexts;
+    public GameObject endScore;
+    public GameObject winnerText;
 
     /// <summary>
     /// Círculos separadores de líneas
@@ -66,6 +64,7 @@ public class GameController : MonoBehaviour
     /// Lista de jugadores. Si el string contiene "Ai", será una IA
     /// </summary>
     List<string> players;
+    
 
     public static GameController Instance;
 
@@ -75,12 +74,22 @@ public class GameController : MonoBehaviour
             Destroy(this);
         else
             Instance = this;
-        
-        endTexts.SetActive(false);
+
+        EndTexts(false);
 
         players = new List<string>();
         players.Add("Jugador1");
         
+    }
+
+    /// <summary>
+    /// Maneja el estado de los textos finales
+    /// </summary>
+    /// <param name="state"></param>
+    public void EndTexts(bool state)
+    {
+        endScore.SetActive(state);
+        winnerText.SetActive(state);
     }
 
     /// <summary>
